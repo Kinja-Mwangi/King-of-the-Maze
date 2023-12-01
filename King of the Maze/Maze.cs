@@ -98,7 +98,6 @@ namespace King_of_the_Maze
                     maze[(newX + x) / 2, (newY + y) / 2] = 1; // Remove the wall between the current and new cell
                     RecursiveBacktracking(newX, newY); // Recursively create the maze from the new cell
                 }
-
             }
         }
 

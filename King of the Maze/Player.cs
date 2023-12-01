@@ -12,7 +12,7 @@ namespace King_of_the_Maze
         public GameTime gameTime;
         private Maze _maze;
         private int _cellSize;
-        private Vector2 _position;
+        public Vector2 _position;
         private int _movementTimer = 0;
         private int _movementInterval = 5; // Adjust this value for slower or faster movement
         private Texture2D _playerTexture; // Texture for drawing a single pixel
