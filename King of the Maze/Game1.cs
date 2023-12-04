@@ -38,7 +38,7 @@ namespace King_of_the_Maze
             //_minion = new Minion(_maze, 10, GraphicsDevice);
             for (int i = 0; i < numberOfMinions; i++)
             {
-                _minion = new Minion(_maze, 10, GraphicsDevice);
+                _minion = new Minion(_maze, _player, 10, GraphicsDevice);
                 _minions.Add(_minion);
             }
 

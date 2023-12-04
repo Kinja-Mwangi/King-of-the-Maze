@@ -10,6 +10,7 @@ namespace King_of_the_Maze
     {
         private Random rng = new Random();
         private Maze _maze;
+        private Player _player;
         private int _cellSize;
         private Vector2 _position;
         private int _currentDirectionX;
@@ -18,9 +19,10 @@ namespace King_of_the_Maze
         private int _movementInterval = 5; // Adjust this value for slower or faster movement
         private Texture2D _minionTexture;
 
-        public Minion(Maze maze, int cellSize, GraphicsDevice graphicsDevice)
+        public Minion(Maze maze, Player player, int cellSize, GraphicsDevice graphicsDevice)
         {
             _maze = maze;
+            _player = player;
             _cellSize = cellSize;
             _position = new Vector2(1, 1);
 
@@ -39,7 +41,114 @@ namespace King_of_the_Maze
         public void HandleMovement()
         {
             // Move the minion continuously in the current direction if valid
-            RandomMovement(_currentDirectionX, _currentDirectionY);
+            //RandomMovement(_currentDirectionX, _currentDirectionY);
+            FollowPath(FindShortestPath(_player._position));
+
+        }
+
+        public List<Vector2> FindShortestPath(Vector2 targetPosition)
+        {
+            // Create a queue for BFS
+            Queue<Vector2> queue = new Queue<Vector2>();
+
+            // Create a dictionary to track visited nodes and their parent nodes
+            Dictionary<Vector2, Vector2> parentMap = new Dictionary<Vector2, Vector2>();
+
+            // Enqueue the starting position
+            queue.Enqueue(_position);
+
+            // Mark the starting position as visited
+            parentMap[_position] = _position;
+
+            // Perform BFS
+            while (queue.Count > 0)
+            {
+                Vector2 current = queue.Dequeue();
+
+                // Check if we've reached the target position
+                if (current == targetPosition)
+                {
+                    // Reconstruct the path
+                    return ReconstructPath(parentMap, _position, targetPosition);
+                }
+
+                // Get neighbors of the current position
+                List<Vector2> neighbors = GetNeighbors(current);
+
+                // Enqueue unvisited neighbors
+                foreach (Vector2 neighbor in neighbors)
+                {
+                    if (!parentMap.ContainsKey(neighbor))
+                    {
+                        queue.Enqueue(neighbor);
+                        parentMap[neighbor] = current;
+                    }
+                }
+            }
+
+            // If we reach here, there is no path to the target
+            return new List<Vector2>();
+        }
+
+        private List<Vector2> ReconstructPath(Dictionary<Vector2, Vector2> parentMap, Vector2 start, Vector2 end)
+        {
+            List<Vector2> path = new List<Vector2>();
+            Vector2 current = end;
+
+            // Reconstruct the path by following parent pointers
+            while (current != start)
+            {
+                path.Add(current);
+                current = parentMap[current];
+            }
+
+            // Add the start position
+            path.Add(start);
+
+            // Reverse the path to get it in the correct order
+            path.Reverse();
+
+            return path;
+        }
+
+        private List<Vector2> GetNeighbors(Vector2 position)
+        {
+            List<Vector2> neighbors = new List<Vector2>();
+
+            // Consider 4-directional movement (up, down, left, right)
+            Vector2[] directions = { Vector2.UnitX, -Vector2.UnitX, Vector2.UnitY, -Vector2.UnitY };
+
+            foreach (Vector2 dir in directions)
+            {
+                Vector2 neighbor = position + dir;
+
+                // Check if the neighbor is within bounds and is not a wall
+                if (_maze.ValidPosition((int)neighbor.X, (int)neighbor.Y) && _maze.maze[(int)neighbor.X, (int)neighbor.Y] != 0)
+                {
+                    neighbors.Add(neighbor);
+                }
+            }
+
+            return neighbors;
+        }
+
+        private void FollowPath(List<Vector2> path)
+        {
+            if (_movementTimer == _movementInterval && path.Count > 0)
+            {
+                // Move towards the next node in the path
+                Vector2 nextNode = path[0];
+
+                // Update the minion's position
+                _position = nextNode;
+
+                // Remove the reached node from the path
+                path.RemoveAt(0);
+
+                _movementTimer = 0;
+            }
+
+            _movementTimer++;
         }
 
         private void RandomMovement(int dx, int dy)
@@ -51,8 +160,7 @@ namespace King_of_the_Maze
 
                 if (_maze.ValidPosition(newX, newY) && _maze.maze[newX, newY] != 0)
                 {
-                    _position.X = newX;
-                    _position.Y = newY;
+                    Move(newX, newY);
                 }
                 else
                 {
@@ -69,6 +177,12 @@ namespace King_of_the_Maze
             }
 
             _movementTimer++;
+        }
+
+        private void Move(int newX, int newY)
+        {
+            _position.X = newX;
+            _position.Y = newY;
         }
 
         public void Draw(SpriteBatch spriteBatch)
