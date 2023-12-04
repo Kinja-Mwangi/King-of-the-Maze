@@ -69,7 +69,7 @@ namespace King_of_the_Maze
             //_minion.Move();
             foreach (Minion minion in _minions)
             {
-                minion.TrackPlayer(_player, _minion);
+                minion.HandleMovement();
             }
             base.Update(gameTime);
         }

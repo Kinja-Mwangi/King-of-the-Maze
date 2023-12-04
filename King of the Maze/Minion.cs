@@ -17,8 +17,6 @@ namespace King_of_the_Maze
         private int _movementTimer = 0;
         private int _movementInterval = 5; // Adjust this value for slower or faster movement
         private Texture2D _minionTexture;
-        private AStarPathfinder _pathfinder = new AStarPathfinder();
-        private List<Vector2> _currentPath = new List<Vector2>();
 
         public Minion(Maze maze, int cellSize, GraphicsDevice graphicsDevice)
         {
@@ -36,54 +34,6 @@ namespace King_of_the_Maze
                 _currentDirectionY = rng.Next(-1, 2);
             }
             while (!((_currentDirectionX == 0 && _currentDirectionY != 0) || (_currentDirectionX != 0 && _currentDirectionY == 0)));
-        }
-
-        public void TrackPlayer(Player player, Minion minion)
-        {
-            //Vector2 playerPosition = new Vector2(player._position.X, player._position.Y);
-
-            // Use A* to find a path to the player's position
-            _currentPath = _pathfinder.FindPath(minion._position, player._position, _maze);
-            FollowPath();
-        }
-
-        public void FollowPath()
-        {
-            if (_movementTimer == _movementInterval)
-            {
-                if (_currentPath.Count > 0)
-                {
-                    // Move towards the next node in the path
-                    Vector2 nextNode = _currentPath[0];
-
-                    // Calculate direction towards the next node
-                    Vector2 direction = Vector2.Normalize(nextNode - _position);
-
-                    // Update current direction
-                    _currentDirectionX = (int)direction.X;
-                    _currentDirectionY = (int)direction.Y;
-
-                    int newX = (int)(_position.X + _currentDirectionX);
-                    int newY = (int)(_position.Y + _currentDirectionY);
-
-                    // Check if the new position is valid and not a wall
-                    if (_maze.ValidPosition(newX, newY) && _maze.maze[newX, newY] != 0)
-                    {
-                        _position.X = newX;
-                        _position.Y = newY;
-
-                        // Check if the minion has reached the next node
-                        if (Vector2.Distance(_position, nextNode) < 0.1f)
-                        {
-                            // Remove the reached node from the path
-                            _currentPath.RemoveAt(0);
-                        }
-                    }
-                }
-                _movementTimer = 0;
-            }
-
-            _movementTimer++;
         }
 
         public void HandleMovement()
