@@ -12,7 +12,7 @@ namespace King_of_the_Maze
         private Maze _maze;
         private Player _player;
         private int _cellSize;
-        private Vector2 _position;
+        private Vector2 _minionPosition;
         private int _currentDirectionX;
         private int _currentDirectionY;
         private int _movementTimer = 0;
@@ -24,7 +24,7 @@ namespace King_of_the_Maze
             _maze = maze;
             _player = player;
             _cellSize = cellSize;
-            _position = new Vector2(1, 1);
+            _minionPosition = new Vector2(5, 5);
 
             _minionTexture = new Texture2D(graphicsDevice, 1, 1);
             _minionTexture.SetData(new Color[] { Color.CornflowerBlue });
@@ -41,9 +41,13 @@ namespace King_of_the_Maze
         public void HandleMovement()
         {
             // Move the minion continuously in the current direction if valid
-            //RandomMovement(_currentDirectionX, _currentDirectionY);
-            FollowPath(FindShortestPath(_player._position));
-
+            if (_movementTimer == _movementInterval)
+            {
+                //RandomMovement(_currentDirectionX, _currentDirectionY);
+                FollowPath(FindShortestPath(_player._playerPosition));
+                _movementTimer = 0;
+            }
+            _movementTimer++;
         }
 
         public List<Vector2> FindShortestPath(Vector2 targetPosition)
@@ -55,10 +59,10 @@ namespace King_of_the_Maze
             Dictionary<Vector2, Vector2> parentMap = new Dictionary<Vector2, Vector2>();
 
             // Enqueue the starting position
-            queue.Enqueue(_position);
+            queue.Enqueue(_minionPosition);
 
             // Mark the starting position as visited
-            parentMap[_position] = _position;
+            parentMap[_minionPosition] = _minionPosition;
 
             // Perform BFS
             while (queue.Count > 0)
@@ -69,7 +73,7 @@ namespace King_of_the_Maze
                 if (current == targetPosition)
                 {
                     // Reconstruct the path
-                    return ReconstructPath(parentMap, _position, targetPosition);
+                    return ReconstructPath(parentMap, _minionPosition, targetPosition);
                 }
 
                 // Get neighbors of the current position
@@ -134,61 +138,47 @@ namespace King_of_the_Maze
 
         private void FollowPath(List<Vector2> path)
         {
-            if (_movementTimer == _movementInterval && path.Count > 0)
-            {
-                // Move towards the next node in the path
-                Vector2 nextNode = path[0];
+            // Move towards the next node in the path
+            Vector2 nextNode = path[0];
 
-                // Update the minion's position
-                _position = nextNode;
+            // Update the minion's position
+            _minionPosition = nextNode;
 
-                // Remove the reached node from the path
-                path.RemoveAt(0);
-
-                _movementTimer = 0;
-            }
-
-            _movementTimer++;
+            // Remove the reached node from the path
+            path.RemoveAt(0);
         }
 
         private void RandomMovement(int dx, int dy)
         {
-            if (_movementTimer == _movementInterval)
+            int newX = (int)(_minionPosition.X + dx);
+            int newY = (int)(_minionPosition.Y + dy);
+
+            if (_maze.ValidPosition(newX, newY) && _maze.maze[newX, newY] != 0)
             {
-                int newX = (int)(_position.X + dx);
-                int newY = (int)(_position.Y + dy);
-
-                if (_maze.ValidPosition(newX, newY) && _maze.maze[newX, newY] != 0)
-                {
-                    Move(newX, newY);
-                }
-                else
-                {
-                    // If hitting a wall, change the direction
-                    do
-                    {
-                        _currentDirectionX = rng.Next(-1, 2);
-                        _currentDirectionY = rng.Next(-1, 2);
-                    }
-                    while (!((_currentDirectionX == 0 && _currentDirectionY != 0) || (_currentDirectionX != 0 && _currentDirectionY == 0)));
-                }
-
-                _movementTimer = 0;
+                Move(newX, newY);
             }
-
-            _movementTimer++;
+            else
+            {
+                // If hitting a wall, change the direction
+                do
+                {
+                    _currentDirectionX = rng.Next(-1, 2);
+                    _currentDirectionY = rng.Next(-1, 2);
+                }
+                while (!((_currentDirectionX == 0 && _currentDirectionY != 0) || (_currentDirectionX != 0 && _currentDirectionY == 0)));
+            }
         }
 
         private void Move(int newX, int newY)
         {
-            _position.X = newX;
-            _position.Y = newY;
+            _minionPosition.X = newX;
+            _minionPosition.Y = newY;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             // Draw the minion as a single pixel
-            Rectangle minionRect = new Rectangle((int)(_position.X * _cellSize), (int)(_position.Y * _cellSize), _cellSize, _cellSize);
+            Rectangle minionRect = new Rectangle((int)(_minionPosition.X * _cellSize), (int)(_minionPosition.Y * _cellSize), _cellSize, _cellSize);
             spriteBatch.Draw(_minionTexture, minionRect, Color.CornflowerBlue);
             //to do - draw the minion as a triangle making it easier to differentiate from players
         }
