@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace King_of_the_Maze
 {
@@ -151,6 +152,14 @@ namespace King_of_the_Maze
                     neighbors.Add(neighbor);
                 }
             }
+
+            string fileName = "Test-Neighbours.txt";
+            FileStream appendText = File.Open(fileName, FileMode.Append);
+            using StreamWriter write = new StreamWriter(appendText);
+            {
+                write.WriteLine(String.Join(", ", neighbors));
+            }
+            write.Close();
 
             return neighbors;
         }
