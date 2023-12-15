@@ -41,21 +41,21 @@ namespace King_of_the_Maze
 
         public void HandleMovement()
         {
-            //write the _player._playerPosition to a txt file to check it is accurate and updating
-            string fileName = "Test-PlayerPositionTracking.txt";
-            FileStream appendText = File.Open(fileName, FileMode.Append);
-            using StreamWriter write = new StreamWriter(appendText);
-            {
-                write.WriteLine(_player._playerPosition);
-            }
-            write.Close();
+            ////write the _player._playerPosition to a txt file to check it is accurate and updating
+            //string fileName = "Test-PlayerPositionTracking.txt";
+            //FileStream appendText = File.Open(fileName, FileMode.Append);
+            //using StreamWriter write = new StreamWriter(appendText);
+            //{
+            //    write.WriteLine(_player._playerPosition);
+            //}
+            //write.Close();
 
             //Move the minion continuously in the current direction if valid
             if (_movementTimer == _movementInterval)
             {
-                    //RandomMovement(_currentDirectionX, _currentDirectionY);
-                    FollowPath(FindShortestPath(_player._playerPosition));
-                    _movementTimer = 0;
+                //RandomMovement(_currentDirectionX, _currentDirectionY);
+                FollowPath(FindShortestPath(_player._playerPosition));
+                _movementTimer = 0;
             }
             _movementTimer++;
         }
@@ -82,22 +82,17 @@ namespace King_of_the_Maze
                 // Check if we've reached the target position
                 if (current == targetPosition)
                 {
-                    List<Vector2> path = ReconstructPath(parentMap, _minionPosition, targetPosition);
                     //write the ReconstructPath(parentMap, _minionPosition, targetPosition) to a txt file to check it is accurate and updating
                     string fileName = "Test-ShortestPathTracking.txt";
                     FileStream appendText = File.Open(fileName, FileMode.Append);
-                    for (int i = 0; i < ReconstructPath(parentMap, _minionPosition, targetPosition).Count; i++)
+                    using StreamWriter write = new StreamWriter(appendText);
                     {
-                        using StreamWriter write = new StreamWriter(appendText);
-                        {
-                            write.WriteLine(path[i].ToString);
-                        }
-                        write.Close(); 
+                        write.WriteLine(String.Join(", ", ReconstructPath(parentMap, _minionPosition, targetPosition)));
                     }
+                    write.Close();
 
                     // Reconstruct the path
-                    //return ReconstructPath(parentMap, _minionPosition, targetPosition);
-                    return path;
+                    return ReconstructPath(parentMap, _minionPosition, targetPosition);
                 }
 
                 // Get neighbors of the current position
