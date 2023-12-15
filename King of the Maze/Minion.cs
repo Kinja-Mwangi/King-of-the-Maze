@@ -18,7 +18,7 @@ namespace King_of_the_Maze
         private int _currentDirectionX;
         private int _currentDirectionY;
         private int _movementTimer = 0;
-        private int _movementInterval = 5; // Adjust this value for slower or faster movement
+        private int _movementInterval = 10; // Adjust this value for slower or faster movement
         private Texture2D _minionTexture;
 
         public Minion(Maze maze, Player player, int cellSize, GraphicsDevice graphicsDevice)
@@ -26,7 +26,7 @@ namespace King_of_the_Maze
             _maze = maze;
             _player = player;
             _cellSize = cellSize;
-            _minionPosition = new Vector2(5, 6);
+            _minionPosition = new Vector2(50, 80);
 
             _minionTexture = new Texture2D(graphicsDevice, 1, 1);
             _minionTexture.SetData(new Color[] { Color.CornflowerBlue });
@@ -42,19 +42,20 @@ namespace King_of_the_Maze
 
         public void HandleMovement()
         {
-            ////write the _player._playerPosition to a txt file to check it is accurate and updating
-            //string fileName = "Test-PlayerPositionTracking.txt";
-            //FileStream appendText = File.Open(fileName, FileMode.Append);
-            //using StreamWriter write = new StreamWriter(appendText);
-            //{
-            //    write.WriteLine(_player._playerPosition);
-            //}
-            //write.Close();
+            //write the _player._playerPosition to a txt file to check it is accurate and updating
+            string fileName = "Test-PlayerPositionTracking.txt";
+            FileStream appendText = File.Open(fileName, FileMode.Append);
+            using StreamWriter write = new StreamWriter(appendText);
+            {
+                write.WriteLine(_player._playerPosition);
+            }
+            write.Close();
 
             //Move the minion continuously in the current direction if valid
+
+            //RandomMovement(_currentDirectionX, _currentDirectionY);#
             if (_movementTimer == _movementInterval)
             {
-                //RandomMovement(_currentDirectionX, _currentDirectionY);
                 FollowPath(FindShortestPath(_player._playerPosition));
                 _movementTimer = 0;
             }
@@ -166,14 +167,30 @@ namespace King_of_the_Maze
 
         private void FollowPath(List<Vector2> path)
         {
-            // Move towards the next node in the path
-            Vector2 nextNode = path[0];
+            while (path.Count > 0)
+            {
+                // Move towards the next node in the path
+                Vector2 nextNode = path[0];
 
-            // Update the minion's position
-            _minionPosition = nextNode;
+                string fileName = "nextNode.txt";
+                FileStream appendText = File.Open(fileName, FileMode.Append);
+                using StreamWriter write = new StreamWriter(appendText);
+                {
+                    write.WriteLine(nextNode);
+                }
+                write.Close();
 
-            // Remove the reached node from the path
-            path.RemoveAt(0);
+
+                //// Update the minion's position
+                //_minionPosition = nextNode;
+
+                if (_maze.ValidPosition((int)nextNode.X, (int)nextNode.Y) && _maze.maze[(int)nextNode.X, (int)nextNode.Y] != 0)
+                {
+                    Move((int)nextNode.X, (int)nextNode.Y);
+                }
+                // Remove the reached node from the path
+                path.RemoveAt(0);
+            }
         }
 
         private void RandomMovement(int dx, int dy)
