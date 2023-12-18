@@ -55,6 +55,10 @@ namespace King_of_the_Maze
             {
                 PlayerMoveMent(1, 0); // Right
             }
+            if (keyboardState.IsKeyDown(Keys.T))
+            {
+                _playerPosition = new Vector2(rng.Next(1, 50), rng.Next(1, 50));
+            }
 
             //for random movement
             //switch(rng.Next(0, 3))
