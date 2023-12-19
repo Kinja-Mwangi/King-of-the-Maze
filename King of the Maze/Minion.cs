@@ -26,7 +26,7 @@ namespace King_of_the_Maze
             _maze = maze;
             _player = player;
             _cellSize = cellSize;
-            _minionPosition = new Vector2(50, 80);
+            _minionPosition = new Vector2(5, 6);
 
             _minionTexture = new Texture2D(graphicsDevice, 1, 1);
             _minionTexture.SetData(new Color[] { Color.CornflowerBlue });
@@ -53,10 +53,10 @@ namespace King_of_the_Maze
 
             //Move the minion continuously in the current direction if valid
 
-            //RandomMovement(_currentDirectionX, _currentDirectionY);#
             if (_movementTimer == _movementInterval)
             {
-                FollowPath(FindShortestPath(_player._playerPosition));
+                RandomMovement(_currentDirectionX, _currentDirectionY);
+                //FollowPath(FindShortestPath(_player._playerPosition));
                 _movementTimer = 0;
             }
             _movementTimer++;
@@ -167,7 +167,7 @@ namespace King_of_the_Maze
 
         private void FollowPath(List<Vector2> path)
         {
-            while (path.Count > 0)
+            if (path.Count > 0)
             {
                 // Move towards the next node in the path
                 Vector2 nextNode = path[0];
