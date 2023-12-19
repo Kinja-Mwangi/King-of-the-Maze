@@ -17,7 +17,7 @@ namespace King_of_the_Maze
         private Minion _minion;
         private RenderTarget2D _mazeBuffer;
         private List<Minion> _minions = new List<Minion>();
-        private int numberOfMinions = 5;
+        private int numberOfMinions = 1;
 
         public Game1()
         {
