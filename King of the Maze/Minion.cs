@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SharpDX.XAudio2;
 //using SharpDX.Direct2D1;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,9 @@ namespace King_of_the_Maze
         private Player _player;
         private int _cellSize;
         private Vector2 _minionPosition;
+        private float _movementSpeed = 0.5f;
         private int _currentDirectionX;
         private int _currentDirectionY;
-        private int _movementTimer = 0;
-        private int _movementInterval = 10; // Adjust this value for slower or faster movement
         private Texture2D _minionTexture;
 
         public Minion(Maze maze, Player player, int cellSize, GraphicsDevice graphicsDevice)
@@ -26,7 +26,7 @@ namespace King_of_the_Maze
             _maze = maze;
             _player = player;
             _cellSize = cellSize;
-            _minionPosition = new Vector2(50, 80);
+            _minionPosition = new Vector2(30, 1);
 
             _minionTexture = new Texture2D(graphicsDevice, 1, 1);
             _minionTexture.SetData(new Color[] { Color.CornflowerBlue });
@@ -54,12 +54,18 @@ namespace King_of_the_Maze
             //Move the minion continuously in the current direction if valid
 
             //RandomMovement(_currentDirectionX, _currentDirectionY);#
-            if (_movementTimer == _movementInterval)
-            {
+            //if (_movementTimer == _movementInterval)
+            //{
                 FollowPath(FindShortestPath(_player._playerPosition));
-                _movementTimer = 0;
-            }
-            _movementTimer++;
+                //Teleport();
+            //    _movementTimer = 0;
+            //}
+            //_movementTimer++;
+        }
+
+        public void Teleport()
+        {
+            _minionPosition = _player._playerPosition;
         }
 
         public List<Vector2> FindShortestPath(Vector2 targetPosition)
@@ -154,6 +160,11 @@ namespace King_of_the_Maze
                 }
             }
 
+            for (int i = 0; i < neighbors.Count; i++)
+            {
+                neighbors[i] = neighbors[i];
+            }
+
             string fileName = "Test-Neighbours.txt";
             FileStream appendText = File.Open(fileName, FileMode.Append);
             using StreamWriter write = new StreamWriter(appendText);
@@ -167,6 +178,12 @@ namespace King_of_the_Maze
 
         private void FollowPath(List<Vector2> path)
         {
+            List<Vector2> newPath = new List<Vector2>(); //this will contain the path to the player in small incremental steps - slowing down the minion
+            for (int i = 0; i < path.Count; i++)
+            {
+                path[i] = path[i] * _movementSpeed;
+            }
+            for (int u = 0 u < )
             while (path.Count > 0)
             {
                 // Move towards the next node in the path
@@ -218,6 +235,13 @@ namespace King_of_the_Maze
         {
             _minionPosition.X = newX;
             _minionPosition.Y = newY;
+            string fileName = "_minionPosition.txt";
+            FileStream appendText = File.Open(fileName, FileMode.Append);
+            using StreamWriter write = new StreamWriter(appendText);
+            {
+                write.WriteLine(_minionPosition);
+            }
+            write.Close();
         }
 
         public void Draw(SpriteBatch spriteBatch)
