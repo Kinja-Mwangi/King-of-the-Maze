@@ -93,7 +93,6 @@ namespace King_of_the_Maze
 
                 _movementTimer = 0;
             }
-
             _movementTimer++;
         }
 

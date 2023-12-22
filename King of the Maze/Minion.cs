@@ -20,6 +20,9 @@ namespace King_of_the_Maze
         private int _currentDirectionX;
         private int _currentDirectionY;
         private Texture2D _minionTexture;
+        public List<Vector2> _playerPosList = new List<Vector2>();
+        //public List<Vector2> _playerDPosList = new List<Vector2>(); //list of every change in position the player makes
+        public List<Vector2> _path = new List<Vector2>();
 
         public Minion(Maze maze, Player player, int cellSize, GraphicsDevice graphicsDevice)
         {
@@ -27,6 +30,7 @@ namespace King_of_the_Maze
             _player = player;
             _cellSize = cellSize;
             _minionPosition = new Vector2(30, 1);
+            _path = FindShortestPath(_player._playerPosition);
 
             _minionTexture = new Texture2D(graphicsDevice, 1, 1);
             _minionTexture.SetData(new Color[] { Color.CornflowerBlue });
@@ -42,6 +46,14 @@ namespace King_of_the_Maze
 
         public void HandleMovement()
         {
+            //_playerPosList.Add(_player._playerPosition);
+            //for (int i = 0; i < _playerPosList.Count(); i++) 
+            //{
+            //    if (_playerPosList[i] != _playerPosList[i++])
+            //    {
+            //        _playerDPosList.Add(_playerPosList[i]);
+            //    }
+            //}
             //write the _player._playerPosition to a txt file to check it is accurate and updating
             string fileName = "Test-PlayerPositionTracking.txt";
             FileStream appendText = File.Open(fileName, FileMode.Append);
@@ -51,16 +63,37 @@ namespace King_of_the_Maze
             }
             write.Close();
 
+            //if (_minionPosition == _player._playerPosition)
+            //{
+            //    Teleport();
+            //}
+
+            string fileName1 = "Test-PlayerPosList.txt";
+            FileStream appendText1 = File.Open(fileName1, FileMode.Append);
+            using StreamWriter write1 = new StreamWriter(appendText1);
+            {
+                write1.WriteLine(String.Join(", ", _playerPosList));
+            }
+            write1.Close();
+
+            if (_playerPosList.Count() > 0 && _playerPosList.Last() != _player._playerPosition)
+            {
+                _path = FindShortestPath(_player._playerPosition);
+            }
+
+            FollowPath(_path);
+
             //Move the minion continuously in the current direction if valid
 
             //RandomMovement(_currentDirectionX, _currentDirectionY);#
             //if (_movementTimer == _movementInterval)
             //{
-                FollowPath(FindShortestPath(_player._playerPosition));
-                //Teleport();
+            //FollowPath(FindShortestPath(_player._playerPosition));
+            //Teleport();
             //    _movementTimer = 0;
             //}
             //_movementTimer++;
+            _playerPosList.Add(_player._playerPosition);
         }
 
         public void Teleport()
@@ -160,10 +193,10 @@ namespace King_of_the_Maze
                 }
             }
 
-            for (int i = 0; i < neighbors.Count; i++)
-            {
-                neighbors[i] = neighbors[i];
-            }
+            //for (int i = 0; i < neighbors.Count; i++)
+            //{
+            //    neighbors[i] = new Vector2 (neighbors[i].X * _movementSpeed, neighbors[i].Y * _movementSpeed);
+            //}
 
             string fileName = "Test-Neighbours.txt";
             FileStream appendText = File.Open(fileName, FileMode.Append);
@@ -178,15 +211,15 @@ namespace King_of_the_Maze
 
         private void FollowPath(List<Vector2> path)
         {
-            List<Vector2> newPath = new List<Vector2>(); //this will contain the path to the player in small incremental steps - slowing down the minion
-            for (int i = 0; i < path.Count; i++)
-            {
-                path[i] = path[i] * _movementSpeed;
-            }
-            for (int u = 0 u < )
-            while (path.Count > 0)
-            {
+            //List<Vector2> newPath = new List<Vector2>(); //this will contain the path to the player in small incremental steps - slowing down the minion
+            //for (int i = 0; i < path.Count; i++)
+            //{
+            //    path[i] = path[i] * _movementSpeed;
+            //}
+            //for (int u = 0 u < )
                 // Move towards the next node in the path
+            if (path.Count() > 0)
+            {
                 Vector2 nextNode = path[0];
 
                 string fileName = "nextNode.txt";
@@ -233,6 +266,11 @@ namespace King_of_the_Maze
 
         private void Move(int newX, int newY)
         {
+            //do
+            //{
+            //    _minionPosition.X += _movementSpeed;
+            //}
+            //while (_minionPosition.X < newX);
             _minionPosition.X = newX;
             _minionPosition.Y = newY;
             string fileName = "_minionPosition.txt";
