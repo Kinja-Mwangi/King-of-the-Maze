@@ -19,7 +19,7 @@ namespace King_of_the_Maze
         private Vector2 _position;
         private float _movementSpeed = 0.3f;
         private int _movementTimer = 0;
-        private int _movementInterval = 5; // Adjust this value for slower or faster movement
+        private int _movementInterval = 9; // Adjust this value for slower or faster movement
         private int _currentDirectionX;
         private int _currentDirectionY;
         private Texture2D _minionTexture;
@@ -50,62 +50,41 @@ namespace King_of_the_Maze
         {
             if (_movementTimer == _movementInterval)
             {
-                //_playerPosList.Add(_player._position);
-                //for (int i = 0; i < _playerPosList.Count(); i++) 
-                //{
-                //    if (_playerPosList[i] != _playerPosList[i++])
-                //    {
-                //        _playerDPosList.Add(_playerPosList[i]);
-                //    }
-                //}
-                //write the _player._position to a txt file to check it is accurate and updating
-                string fileName = "Test-PlayerPositionTracking.txt";
-                FileStream appendText = File.Open(fileName, FileMode.Append);
-                using StreamWriter write = new StreamWriter(appendText);
+                if (Vector2.Distance(_position, _player._position) > 10)
                 {
-                    write.WriteLine(_player._position);
+                    RandomMovement(_currentDirectionX, _currentDirectionY);
                 }
-                write.Close();
-
-                //if (_position == _player._position)
-                //{
-                //    Teleport();
-                //}
-
-                string fileName1 = "Test-PlayerPosList.txt";
-                FileStream appendText1 = File.Open(fileName1, FileMode.Append);
-                using StreamWriter write1 = new StreamWriter(appendText1);
+                else
                 {
-                    write1.WriteLine(String.Join(", ", _playerPosList));
+                    //write the _player._position to a txt file to check it is accurate and updating
+                    string fileName = "Test-PlayerPositionTracking.txt";
+                    FileStream appendText = File.Open(fileName, FileMode.Append);
+                    using StreamWriter write = new StreamWriter(appendText);
+                    {
+                        write.WriteLine(_player._position);
+                    }
+                    write.Close();
+
+                    string fileName1 = "Test-PlayerPosList.txt";
+                    FileStream appendText1 = File.Open(fileName1, FileMode.Append);
+                    using StreamWriter write1 = new StreamWriter(appendText1);
+                    {
+                        write1.WriteLine(String.Join(", ", _playerPosList));
+                    }
+                    write1.Close();
+
+                    if (_playerPosList.Count() > 0 && _playerPosList.Last() != _player._position)
+                    {
+                        _path = FindShortestPath(_player._position);
+                    }
+
+                    FollowPath(_path);
+
+                    _playerPosList.Add(_player._position);
                 }
-                write1.Close();
-
-                if (_playerPosList.Count() > 0 && _playerPosList.Last() != _player._position)
-                {
-                    _path = FindShortestPath(_player._position);
-                }
-
-                FollowPath(_path);
-
-                //Move the minion continuously in the current direction if valid
-
-                //RandomMovement(_currentDirectionX, _currentDirectionY);
-                //if (_movementTimer == _movementInterval)
-                //{
-                //FollowPath(FindShortestPath(_player._position));
-                //Teleport();
-                //    _movementTimer = 0;
-                //}
-                //_movementTimer++;
-                _playerPosList.Add(_player._position);
                 _movementTimer = 0;
             }
             _movementTimer++;
-        }
-
-        public void Teleport()
-        {
-            _position = _player._position;
         }
 
         public List<Vector2> FindShortestPath(Vector2 targetPosition)
@@ -200,11 +179,6 @@ namespace King_of_the_Maze
                 }
             }
 
-            //for (int i = 0; i < neighbors.Count; i++)
-            //{
-            //    neighbors[i] = new Vector2 (neighbors[i].X * _movementSpeed, neighbors[i].Y * _movementSpeed);
-            //}
-
             string fileName = "Test-Neighbours.txt";
             FileStream appendText = File.Open(fileName, FileMode.Append);
             using StreamWriter write = new StreamWriter(appendText);
@@ -218,14 +192,8 @@ namespace King_of_the_Maze
 
         private void FollowPath(List<Vector2> path)
         {
-            //List<Vector2> newPath = new List<Vector2>(); //this will contain the path to the player in small incremental steps - slowing down the minion
-            //for (int i = 0; i < path.Count; i++)
-            //{
-            //    path[i] = path[i] * _movementSpeed;
-            //}
-            //for (int u = 0 u < )
-                // Move towards the next node in the path
-            if (path.Count() > 0/* && _movementTimer == _movementInterval*/)
+            // Move towards the next node in the path
+            if (path.Count() > 0)
             {
                 Vector2 nextNode = path[0];
 
@@ -238,8 +206,7 @@ namespace King_of_the_Maze
                 write.Close();
 
 
-                //// Update the minion's position
-                //_position = nextNode;
+                // Update the minion's position
 
                 if (_maze.ValidPosition((int)nextNode.X, (int)nextNode.Y) && _maze.maze[(int)nextNode.X, (int)nextNode.Y] != 0)
                 {
@@ -247,9 +214,7 @@ namespace King_of_the_Maze
                 }
                 // Remove the reached node from the path
                 path.RemoveAt(0);
-                //_movementTimer = 0;
             }
-            //_movementTimer++;
         }
 
         private void RandomMovement(int dx, int dy)
@@ -275,17 +240,6 @@ namespace King_of_the_Maze
 
         private void Move(int newX, int newY)
         {
-            //Vector2 direction = Vector2.Normalize(new Vector2(newX, newY) - _position);
-            //while (_position != direction)
-            //{
-            //    direction = Vector2.Normalize(new Vector2(newX, newY) - _position);
-            //    _position += direction * _movementSpeed;
-            //}
-            //do
-            //{
-            //    _position.X += _movementSpeed;
-            //}
-            //while (_position.X < newX);
             _position.X = newX;
             _position.Y = newY;
             string fileName = "_position.txt";
