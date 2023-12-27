@@ -5,6 +5,7 @@ using System;
 //using SharpDX.Direct2D1;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 
 namespace King_of_the_Maze
 {
@@ -13,11 +14,20 @@ namespace King_of_the_Maze
         public GraphicsDeviceManager _graphics;
         public SpriteBatch _spriteBatch;
         private Maze _maze;
+        private Base _base;
         private Player _player;
         private Minion _minion;
         private RenderTarget2D _mazeBuffer;
         private List<Minion> _minions = new List<Minion>();
-        private int numberOfMinions = 1;
+        private List<Base> _bases = new List<Base>();
+        private int _mazeSize = 91;
+        private int _cellSize = 10;
+        public int _maxMinionCount = 10;
+        public int _spawnTimer;
+        public int _spawnInterval = 300;
+        private int _numberOfPlayers = 1;
+        private List<Player> _players = new List<Player>();
+        public Random rng = new Random();
 
         public Game1()
         {
@@ -29,18 +39,33 @@ namespace King_of_the_Maze
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            _maze = new Maze(91, 10);
+            _maze = new Maze(_mazeSize, _cellSize);
+            for (int i = 0; i < _numberOfPlayers; i++)
+            {
+                _player = new Player(_maze, _cellSize, GraphicsDevice);
+                _players.Add(_player);
+            }
+            for (int i = 0; i < _mazeSize; i++)
+            {
+                for (int j = 0; j < _mazeSize; j++)
+                {
+                    if (_maze.maze[i, j] == 2)
+                    {
+                        _base = new Base(new Vector2(i, j), _cellSize, GraphicsDevice, _player, _maze, _maxMinionCount, _base, _bases);
+                        _bases.Add(_base);
+                    }
+                }
+            }
             _graphics.PreferredBackBufferWidth = _maze.mazeSize * _maze.cellSize;
             _graphics.PreferredBackBufferHeight = _maze.mazeSize * _maze.cellSize;
             _graphics.ApplyChanges();
             _mazeBuffer = new RenderTarget2D(GraphicsDevice, _maze.mazeSize * _maze.cellSize, _maze.mazeSize * _maze.cellSize);
-            _player = new Player(_maze, 10, GraphicsDevice);
-            //_minion = new Minion(_maze, 10, GraphicsDevice);
-            for (int i = 0; i < numberOfMinions; i++)
-            {
-                _minion = new Minion(_maze, _player, 10, GraphicsDevice);
-                _minions.Add(_minion);
-            }
+            //_minion = new Minion(_maze, _cellSize, GraphicsDevice);
+            //for (int i = 0; i < numberOfMinions; i++)
+            //{
+            //    _minion = new Minion(_maze, _player, _cellSize, GraphicsDevice);
+            //    _minions.Add(_minion);
+            //}
 
             base.Initialize();
         }
@@ -65,12 +90,30 @@ namespace King_of_the_Maze
                 Exit();
 
             // TODO: Add your update logic here
-            _player.Move();
+            foreach (Player player in _players)
+            {
+                player.Move();
+            }
             //_minion.Move();
+            if (_spawnTimer == _spawnInterval && _minions.Count < _maxMinionCount)
+            {
+                _bases[rng.Next(0, _bases.Count)].SpawnMinions(_minions);
+                _spawnTimer = 0;
+            }
+            _spawnTimer++;
+
+            List<Minion> removeMinions = new List<Minion>();
             foreach (Minion minion in _minions)
             {
                 minion.HandleMovement();
+                removeMinions.Add(minion.DespawnMinions());
             }
+
+            foreach (Minion removeMinion in removeMinions)
+            {
+                _minions.Remove(removeMinion);
+            }
+
             base.Update(gameTime);
         }
 
@@ -86,6 +129,10 @@ namespace King_of_the_Maze
             foreach (Minion minion in _minions)
             {
                 minion.Draw(_spriteBatch);
+            }
+            foreach (Base Base in _bases)
+            {
+                Base.Draw(_spriteBatch);
             }
             _spriteBatch.End();
             base.Draw(gameTime);

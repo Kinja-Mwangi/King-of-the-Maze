@@ -13,6 +13,7 @@ namespace King_of_the_Maze
         private Maze _maze;
         private int _cellSize;
         public Vector2 _position;
+        public string _playerID;
         private int _movementTimer = 0;
         private int _movementInterval = 5; // Adjust this value for slower or faster movement
         private Texture2D _playerTexture; // Texture for drawing a single pixel
@@ -21,8 +22,11 @@ namespace King_of_the_Maze
         {
             _maze = maze;
             _cellSize = cellSize;
+            for (int i = 0; i < 9; i++)
+            {
+                _playerID += rng.Next(0, 9).ToString();
+            }
             _position = new Vector2(1, 1); // Starting position of the player (assuming a maze with walls around it)
-
             // Create a 1x1 pixel texture
             _playerTexture = new Texture2D(graphicsDevice, 1, 1);
             _playerTexture.SetData(new Color[] { Color.White });
@@ -60,7 +64,11 @@ namespace King_of_the_Maze
             }
             if (keyboardState.IsKeyDown(Keys.T))
             {
-                _position = new Vector2(rng.Next(1, 50), rng.Next(1, 50));
+                do
+                {
+                    _position = new Vector2(rng.Next(1, _maze.mazeSize), rng.Next(1, _maze.mazeSize));
+                }
+                while (_maze.maze[(int)_position.X, (int)_position.Y] == 0);
             }
 
             //for random movement

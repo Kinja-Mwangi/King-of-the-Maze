@@ -137,10 +137,10 @@ namespace King_of_the_Maze
                     {
                         _texture.SetData(new Color[] { Color.Black }); //walls are black squares
                     }
-                    else if (maze[i, j] == 2)
-                    {
-                        _texture.SetData(new Color[] { Color.Red }); //bases are red squares
-                    }
+                    //else if (maze[i, j] == 2)
+                    //{
+                    //    _texture.SetData(new Color[] { Color.Red }); //bases are red squares
+                    //}
                     else
                     {
                         _texture.SetData(new Color[] { Color.White }); //corridors are white squares

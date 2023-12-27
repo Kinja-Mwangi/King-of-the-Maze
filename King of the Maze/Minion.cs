@@ -17,7 +17,6 @@ namespace King_of_the_Maze
         private Player _player;
         private int _cellSize;
         private Vector2 _position;
-        private float _movementSpeed = 0.3f;
         private int _movementTimer = 0;
         private int _movementInterval = 9; // Adjust this value for slower or faster movement
         private int _currentDirectionX;
@@ -25,13 +24,18 @@ namespace King_of_the_Maze
         private Texture2D _minionTexture;
         public List<Vector2> _playerPosList = new List<Vector2>();
         public List<Vector2> _path = new List<Vector2>();
+        public List<Minion> _minions = new List<Minion>();
+        private int _minionLifeTime = 5300; //gives a minion the lifespan of about 1 minute 30 seconds
+        private int _minionLifeTimer;
 
-        public Minion(Maze maze, Player player, int cellSize, GraphicsDevice graphicsDevice)
+        public Minion(Maze maze, Player player, int cellSize, GraphicsDevice graphicsDevice, Vector2 position, List<Minion> minions)
         {
             _maze = maze;
             _player = player;
             _cellSize = cellSize;
-            _position = new Vector2(30, 1);
+            _position = position;
+            _minionLifeTimer = 0;
+            _minions = minions;
             _path = FindShortestPath(_player._position);
 
             _minionTexture = new Texture2D(graphicsDevice, 1, 1);
@@ -249,6 +253,16 @@ namespace King_of_the_Maze
                 write.WriteLine(_position);
             }
             write.Close();
+        }
+
+        public Minion DespawnMinions()
+        {
+            if (_minionLifeTimer == _minionLifeTime)
+            {
+                return this;
+            }
+            _minionLifeTimer++;
+            return null;
         }
 
         public void Draw(SpriteBatch spriteBatch)
