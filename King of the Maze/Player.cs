@@ -28,7 +28,7 @@ namespace King_of_the_Maze
             _playerTexture.SetData(new Color[] { Color.White });
         }
 
-        public void Move() 
+        public void Move()
         {
             HandleInput();
         }
@@ -42,16 +42,19 @@ namespace King_of_the_Maze
             {
                 PlayerMoveMent(0, -1); // Up
             }
-            /*else*/ if (keyboardState.IsKeyDown(Keys.S))
+            /*else*/
+            if (keyboardState.IsKeyDown(Keys.S))
             {
                 PlayerMoveMent(0, 1); // Down
             }
 
-            /*else*/ if (keyboardState.IsKeyDown(Keys.A))
+            /*else*/
+            if (keyboardState.IsKeyDown(Keys.A))
             {
                 PlayerMoveMent(-1, 0); // Left
             }
-            /*else*/ if (keyboardState.IsKeyDown(Keys.D))
+            /*else*/
+            if (keyboardState.IsKeyDown(Keys.D))
             {
                 PlayerMoveMent(1, 0); // Right
             }
