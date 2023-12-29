@@ -41,9 +41,7 @@ namespace King_of_the_Maze
 
         public void CaptureBase()
         {
-            if(_player._position == _position)
-            {
-            }
+            _baseTexture = _player._playerTexture;
         }
 
         public void SpawnMinions(List<Minion> minions)

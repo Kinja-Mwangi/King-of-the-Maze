@@ -28,6 +28,7 @@ namespace King_of_the_Maze
         private int _numberOfPlayers = 1;
         private List<Player> _players = new List<Player>();
         public Random rng = new Random();
+        public Color[] _colours = {Color.Blue, Color.Green, Color.Purple, Color.HotPink}; 
 
         public Game1()
         {
@@ -42,7 +43,7 @@ namespace King_of_the_Maze
             _maze = new Maze(_mazeSize, _cellSize);
             for (int i = 0; i < _numberOfPlayers; i++)
             {
-                _player = new Player(_maze, _cellSize, GraphicsDevice);
+                _player = new Player(_maze, _cellSize, _base, _bases, _colours, GraphicsDevice);
                 _players.Add(_player);
             }
             for (int i = 0; i < _mazeSize; i++)
