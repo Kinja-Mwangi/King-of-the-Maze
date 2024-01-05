@@ -56,7 +56,7 @@ namespace King_of_the_Maze
             //        _player = player;
             //    }
             //}
-            _path = FindShortestPath(_player._position);
+            _path = FindShortestPath(_position);
 
             _minionTexture = new Texture2D(graphicsDevice, 1, 1);
             _minionTexture.SetData(new Color[] { Color.White });
@@ -74,44 +74,47 @@ namespace King_of_the_Maze
         {
             if (_movementTimer == _movementInterval)
             {
+                int closestPlayerDistance = (int)Vector2.Distance(new Vector2(1,1), new Vector2(91, 91));
                 foreach (Player player in _players)
                 {
-                    if (_owner == null && Vector2.Distance(_position, player._position) > 10)
+                    if (Vector2.Distance(_position, player._position) < closestPlayerDistance && player != _owner)
                     {
-                        RandomMovement(_currentDirectionX, _currentDirectionY);
+                        closestPlayerDistance = (int)Vector2.Distance(_position, player._position);
+                        _player = player;
                     }
-                    else if (player != _owner && Vector2.Distance(_position, player._position) > 10)
+                }
+                
+                if (Vector2.Distance(_position, _player._position) > 10)
+                {
+                    RandomMovement(_currentDirectionX, _currentDirectionY);
+                }
+                else
+                {
+                    //write the _player._position to a txt file to check it is accurate and updating
+                    string fileName = "Test-PlayerPositionTracking.txt";
+                    FileStream appendText = File.Open(fileName, FileMode.Append);
+                    using StreamWriter write = new StreamWriter(appendText);
                     {
-                        RandomMovement(_currentDirectionX, _currentDirectionY);
+                        write.WriteLine(_player._position);
                     }
-                    else
+                    write.Close();
+
+                    string fileName1 = "Test-PlayerPosList.txt";
+                    FileStream appendText1 = File.Open(fileName1, FileMode.Append);
+                    using StreamWriter write1 = new StreamWriter(appendText1);
                     {
-                        //write the _player._position to a txt file to check it is accurate and updating
-                        string fileName = "Test-PlayerPositionTracking.txt";
-                        FileStream appendText = File.Open(fileName, FileMode.Append);
-                        using StreamWriter write = new StreamWriter(appendText);
-                        {
-                            write.WriteLine(player._position);
-                        }
-                        write.Close();
-
-                        string fileName1 = "Test-PlayerPosList.txt";
-                        FileStream appendText1 = File.Open(fileName1, FileMode.Append);
-                        using StreamWriter write1 = new StreamWriter(appendText1);
-                        {
-                            write1.WriteLine(String.Join(", ", _playerPosList));
-                        }
-                        write1.Close();
-
-                        if (_playerPosList.Count() > 0 && _playerPosList.Last() != _player._position)
-                        {
-                            _path = FindShortestPath(player._position);
-                        }
-
-                        FollowPath(_path);
-
-                        _playerPosList.Add(player._position);
+                        write1.WriteLine(String.Join(", ", _playerPosList));
                     }
+                    write1.Close();
+
+                    if (_playerPosList.Count() > 0 && _playerPosList.Last() != _player._position)
+                    {
+                        _path = FindShortestPath(_player._position);
+                    }
+
+                    FollowPath(_path);
+
+                    _playerPosList.Add(_player._position);
                 }
                 _movementTimer = 0;
             }

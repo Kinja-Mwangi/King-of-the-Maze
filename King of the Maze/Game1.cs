@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 //using SharpDX.Direct2D1;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
@@ -28,7 +29,7 @@ namespace King_of_the_Maze
         private int _numberOfPlayers = 2;
         private List<Player> _players = new List<Player>();
         public Random rng = new Random();
-        public Color[] _colours = {Color.Blue, Color.Green, Color.Purple, Color.HotPink}; 
+        public Color[] _colours = { Color.Green, Color.Purple, Color.Blue, Color.HotPink}; 
 
         public Game1()
         {
@@ -111,10 +112,32 @@ namespace King_of_the_Maze
                 removeMinions.Add(minion.DespawnMinions());
             }
 
-            foreach (Minion removeMinion in removeMinions)
+            if (_minions.Count == _maxMinionCount)
             {
-                _minions.Remove(removeMinion);
+                foreach (Minion removeMinion in removeMinions)
+                {
+                    _minions.Remove(removeMinion);
+                }
             }
+
+            string fileName = "RemoveMinions.txt";
+            FileStream appendText = File.Open(fileName, FileMode.Append);
+            using StreamWriter write = new StreamWriter(appendText);
+            {
+                foreach (Minion removeMinion in _minions)
+                {
+                    write.WriteLine(removeMinion);
+                }
+            }
+            write.Close();
+
+            string fileName1 = "MinionsCount.txt";
+            FileStream appendText1 = File.Open(fileName1, FileMode.Append);
+            using StreamWriter write1 = new StreamWriter(appendText1);
+            {
+                write1.WriteLine(_minions.Count);
+            }
+            write1.Close();
 
             base.Update(gameTime);
         }

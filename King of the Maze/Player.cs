@@ -36,7 +36,7 @@ namespace King_of_the_Maze
             _colours = colours;
             _players = players;
             _playerNumber = _players.Count + 1;
-            _playerColour = _colours[_playerNumber];
+            _playerColour = _colours[_playerNumber - 1];
 
             //for (int i = 0; i < 9; i++)
             //{
