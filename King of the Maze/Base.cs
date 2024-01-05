@@ -13,48 +13,45 @@ namespace King_of_the_Maze
     public class Base
     {
         public Vector2 _position;
-        public int _owner;
+        public Player _owner;
         public bool _captured;
         public int _cellSize;
         public Player _player;
         public Maze _maze;
         private Texture2D _baseTexture;
         public GraphicsDevice _graphicsDevice;
-        private int _maxMinionCount;
-        private List<Base> _bases = new List<Base>();
-        private Base _base;
+        public Color _baseColour;
+        public List<Player> _players = new List<Player>();
         private Random rng = new Random();
 
-        public Base(Vector2 position, int cellSize, GraphicsDevice graphicsDevice, Player player, Maze maze, int maxMinionCount, Base Base, List<Base> bases)
+        public Base(Vector2 position, int cellSize, GraphicsDevice graphicsDevice, Maze maze, List<Player> players)
         {
-            _base = Base;
-            _bases = bases;
             _position = position;
+            _players = players;
             _cellSize = cellSize;
-            _player = player;
             _maze = maze;
-            _maxMinionCount = maxMinionCount;
+            _baseColour = Color.Red;
             _graphicsDevice = graphicsDevice;
             _baseTexture = new Texture2D(_graphicsDevice, 1, 1);
             _baseTexture.SetData(new Color[] { Color.White });
         }
 
-        public void CaptureBase()
+        public void CaptureBase(Player player)
         {
-            _baseTexture = _player._playerTexture;
+            _baseColour = player._playerColour;
+            _owner = player;
         }
 
         public void SpawnMinions(List<Minion> minions)
         {
-            Minion minion = new Minion(_maze, _player, _cellSize, _graphicsDevice, _position, minions);
+            Minion minion = new Minion(_maze, _cellSize, _graphicsDevice, minions, this);
             minions.Add(minion);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             Rectangle baseRect = new Rectangle((int)(_position.X * _cellSize), (int)(_position.Y * _cellSize), _cellSize, _cellSize);
-            spriteBatch.Draw(_baseTexture, baseRect, Color.Red); // You can customize the player's appearance here
+            spriteBatch.Draw(_baseTexture, baseRect, _baseColour); // You can customize the base's appearance here
         }
-
     }
 }

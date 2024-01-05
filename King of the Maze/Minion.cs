@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+//using SharpDX.Direct2D1;
 using SharpDX.XAudio2;
 //using SharpDX.Direct2D1;
 using System;
@@ -27,19 +28,38 @@ namespace King_of_the_Maze
         public List<Minion> _minions = new List<Minion>();
         private int _minionLifeTime = 5300; //gives a minion the lifespan of about 1 minute 30 seconds
         private int _minionLifeTimer;
+        private Color _minionColour;
+        public Player _owner;
+        private Base _base;
+        public int _lives;
+        private List<Player> _players;
 
-        public Minion(Maze maze, Player player, int cellSize, GraphicsDevice graphicsDevice, Vector2 position, List<Minion> minions)
+        public Minion(Maze maze, int cellSize, GraphicsDevice graphicsDevice, List<Minion> minions, Base Base)
         {
+            _lives = 2;
             _maze = maze;
-            _player = player;
             _cellSize = cellSize;
-            _position = position;
             _minionLifeTimer = 0;
             _minions = minions;
+            _base = Base;
+            _players = _base._players;
+            _position = _base._position;
+            _minionColour = _base._baseColour;
+            _owner = _base._owner;
+            _player = _players[rng.Next(0, _players.Count)];
+            //float closestPlayerDistance = 0; 
+            //foreach (Player player in _players) //instantiates a minion with the closest player being assigned the value of _player
+            //{
+            //    if (Vector2.Distance(_position, player._position) < closestPlayerDistance)
+            //    {
+            //        closestPlayerDistance = Vector2.Distance(_position, player._position);
+            //        _player = player;
+            //    }
+            //}
             _path = FindShortestPath(_player._position);
 
             _minionTexture = new Texture2D(graphicsDevice, 1, 1);
-            _minionTexture.SetData(new Color[] { Color.CornflowerBlue });
+            _minionTexture.SetData(new Color[] { Color.White });
 
             // Start with a random initial direction
             do
@@ -54,37 +74,44 @@ namespace King_of_the_Maze
         {
             if (_movementTimer == _movementInterval)
             {
-                if (Vector2.Distance(_position, _player._position) > 10)
+                foreach (Player player in _players)
                 {
-                    RandomMovement(_currentDirectionX, _currentDirectionY);
-                }
-                else
-                {
-                    //write the _player._position to a txt file to check it is accurate and updating
-                    string fileName = "Test-PlayerPositionTracking.txt";
-                    FileStream appendText = File.Open(fileName, FileMode.Append);
-                    using StreamWriter write = new StreamWriter(appendText);
+                    if (_owner == null && Vector2.Distance(_position, player._position) > 10)
                     {
-                        write.WriteLine(_player._position);
+                        RandomMovement(_currentDirectionX, _currentDirectionY);
                     }
-                    write.Close();
-
-                    string fileName1 = "Test-PlayerPosList.txt";
-                    FileStream appendText1 = File.Open(fileName1, FileMode.Append);
-                    using StreamWriter write1 = new StreamWriter(appendText1);
+                    else if (player != _owner && Vector2.Distance(_position, player._position) > 10)
                     {
-                        write1.WriteLine(String.Join(", ", _playerPosList));
+                        RandomMovement(_currentDirectionX, _currentDirectionY);
                     }
-                    write1.Close();
-
-                    if (_playerPosList.Count() > 0 && _playerPosList.Last() != _player._position)
+                    else
                     {
-                        _path = FindShortestPath(_player._position);
+                        //write the _player._position to a txt file to check it is accurate and updating
+                        string fileName = "Test-PlayerPositionTracking.txt";
+                        FileStream appendText = File.Open(fileName, FileMode.Append);
+                        using StreamWriter write = new StreamWriter(appendText);
+                        {
+                            write.WriteLine(player._position);
+                        }
+                        write.Close();
+
+                        string fileName1 = "Test-PlayerPosList.txt";
+                        FileStream appendText1 = File.Open(fileName1, FileMode.Append);
+                        using StreamWriter write1 = new StreamWriter(appendText1);
+                        {
+                            write1.WriteLine(String.Join(", ", _playerPosList));
+                        }
+                        write1.Close();
+
+                        if (_playerPosList.Count() > 0 && _playerPosList.Last() != _player._position)
+                        {
+                            _path = FindShortestPath(player._position);
+                        }
+
+                        FollowPath(_path);
+
+                        _playerPosList.Add(player._position);
                     }
-
-                    FollowPath(_path);
-
-                    _playerPosList.Add(_player._position);
                 }
                 _movementTimer = 0;
             }
@@ -255,9 +282,20 @@ namespace King_of_the_Maze
             write.Close();
         }
 
+        public void Attack()
+        {
+            foreach (Player player in _players)
+            {
+                if (_position == player._position && _owner != player)
+                {
+                    player._lives--;
+                }
+            }
+        }
+
         public Minion DespawnMinions()
         {
-            if (_minionLifeTimer == _minionLifeTime)
+            if (_minionLifeTimer == _minionLifeTime || _lives == 0)
             {
                 return this;
             }
@@ -269,7 +307,7 @@ namespace King_of_the_Maze
         {
             // Draw the minion as a single pixel
             Rectangle minionRect = new Rectangle((int)(_position.X * _cellSize), (int)(_position.Y * _cellSize), _cellSize, _cellSize);
-            spriteBatch.Draw(_minionTexture, minionRect, Color.CornflowerBlue);
+            spriteBatch.Draw(_minionTexture, minionRect, _minionColour);
             //to do - draw the minion as a triangle making it easier to differentiate from players
         }
     }

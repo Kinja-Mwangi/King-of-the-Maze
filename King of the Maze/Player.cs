@@ -22,15 +22,22 @@ namespace King_of_the_Maze
         public Texture2D _playerTexture; // Texture for drawing a single pixel
         private Color[] _colours;
         public Color _playerColour;
+        public int _playerNumber;
+        private List<Player> _players = new List<Player>();
+        public int _lives;
 
-        public Player(Maze maze, int cellSize, Base Base, List<Base> bases, Color[] colours, GraphicsDevice graphicsDevice)
+        public Player(Maze maze, int cellSize, Base Base, List<Base> bases, Color[] colours, List<Player> players, GraphicsDevice graphicsDevice)
         {
+            _lives = 4;
             _maze = maze;
             _cellSize = cellSize;
             _base = Base;
             _bases = bases;
             _colours = colours;
-            _playerColour = _colours[rng.Next(0, _colours.Length)];
+            _players = players;
+            _playerNumber = _players.Count + 1;
+            _playerColour = _colours[_playerNumber];
+
             //for (int i = 0; i < 9; i++)
             //{
             //    _playerID += rng.Next(0, 9).ToString();
@@ -48,7 +55,7 @@ namespace King_of_the_Maze
             {
                 if (_position == Base._position)
                 {
-                    Base.CaptureBase();
+                    Base.CaptureBase(this);
                 }
             }
         }
@@ -57,27 +64,75 @@ namespace King_of_the_Maze
         {
             KeyboardState keyboardState = Keyboard.GetState();
 
-            // Move the player based on the WASD keys
-            if (keyboardState.IsKeyDown(Keys.W))
+            if (_playerNumber == 1)
             {
-                PlayerMoveMent(0, -1); // Up
-            }
-            /*else*/
-            if (keyboardState.IsKeyDown(Keys.S))
-            {
-                PlayerMoveMent(0, 1); // Down
-            }
+                // Move the player based on the WASD keys
+                if (keyboardState.IsKeyDown(Keys.W))
+                {
+                    PlayerMoveMent(0, -1); // Up
+                }
+                /*else*/
+                if (keyboardState.IsKeyDown(Keys.S))
+                {
+                    PlayerMoveMent(0, 1); // Down
+                }
 
-            /*else*/
-            if (keyboardState.IsKeyDown(Keys.A))
-            {
-                PlayerMoveMent(-1, 0); // Left
+                /*else*/
+                if (keyboardState.IsKeyDown(Keys.A))
+                {
+                    PlayerMoveMent(-1, 0); // Left
+                }
+                /*else*/
+                if (keyboardState.IsKeyDown(Keys.D))
+                {
+                    PlayerMoveMent(1, 0); // Right
+                }
             }
-            /*else*/
-            if (keyboardState.IsKeyDown(Keys.D))
+            else if (_playerNumber == 2)
             {
-                PlayerMoveMent(1, 0); // Right
+                // Move the player based on the WASD keys
+                if (keyboardState.IsKeyDown(Keys.Up))
+                {
+                    PlayerMoveMent(0, -1); // Up
+                }
+                /*else*/
+                if (keyboardState.IsKeyDown(Keys.Down))
+                {
+                    PlayerMoveMent(0, 1); // Down
+                }
+
+                /*else*/
+                if (keyboardState.IsKeyDown(Keys.Left))
+                {
+                    PlayerMoveMent(-1, 0); // Left
+                }
+                /*else*/
+                if (keyboardState.IsKeyDown(Keys.Right))
+                {
+                    PlayerMoveMent(1, 0); // Right
+                }
             }
+            //// Move the player based on the WASD keys
+            //if (keyboardState.IsKeyDown(Keys.W))
+            //{
+            //    PlayerMoveMent(0, -1); // Up
+            //}
+            ///*else*/
+            //if (keyboardState.IsKeyDown(Keys.S))
+            //{
+            //    PlayerMoveMent(0, 1); // Down
+            //}
+
+            ///*else*/
+            //if (keyboardState.IsKeyDown(Keys.A))
+            //{
+            //    PlayerMoveMent(-1, 0); // Left
+            //}
+            ///*else*/
+            //if (keyboardState.IsKeyDown(Keys.D))
+            //{
+            //    PlayerMoveMent(1, 0); // Right
+            //}
             if (keyboardState.IsKeyDown(Keys.T))
             {
                 do

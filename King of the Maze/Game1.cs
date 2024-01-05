@@ -25,7 +25,7 @@ namespace King_of_the_Maze
         public int _maxMinionCount = 10;
         public int _spawnTimer;
         public int _spawnInterval = 300;
-        private int _numberOfPlayers = 1;
+        private int _numberOfPlayers = 2;
         private List<Player> _players = new List<Player>();
         public Random rng = new Random();
         public Color[] _colours = {Color.Blue, Color.Green, Color.Purple, Color.HotPink}; 
@@ -43,7 +43,7 @@ namespace King_of_the_Maze
             _maze = new Maze(_mazeSize, _cellSize);
             for (int i = 0; i < _numberOfPlayers; i++)
             {
-                _player = new Player(_maze, _cellSize, _base, _bases, _colours, GraphicsDevice);
+                _player = new Player(_maze, _cellSize, _base, _bases, _colours, _players, GraphicsDevice);
                 _players.Add(_player);
             }
             for (int i = 0; i < _mazeSize; i++)
@@ -52,7 +52,7 @@ namespace King_of_the_Maze
                 {
                     if (_maze.maze[i, j] == 2)
                     {
-                        _base = new Base(new Vector2(i, j), _cellSize, GraphicsDevice, _player, _maze, _maxMinionCount, _base, _bases);
+                        _base = new Base(new Vector2(i, j), _cellSize, GraphicsDevice, _maze, _players);
                         _bases.Add(_base);
                     }
                 }
@@ -107,6 +107,7 @@ namespace King_of_the_Maze
             foreach (Minion minion in _minions)
             {
                 minion.HandleMovement();
+                minion.Attack();
                 removeMinions.Add(minion.DespawnMinions());
             }
 
@@ -125,7 +126,10 @@ namespace King_of_the_Maze
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
             _spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
-            _player.Draw(_spriteBatch);
+            foreach (Player player in _players)
+            {
+                player.Draw(_spriteBatch);
+            }
             //_minion.Draw(_spriteBatch);
             foreach (Minion minion in _minions)
             {
