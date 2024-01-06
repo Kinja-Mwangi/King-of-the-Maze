@@ -24,6 +24,9 @@ namespace King_of_the_Maze
         public Color _playerColour;
         public int _playerNumber;
         private List<Player> _players = new List<Player>();
+        public bool _initialHit = true;
+        public int _inititalHitResetTimer;
+        public int _initialHitResetInterval = 180;
         public int _lives;
 
         public Player(Maze maze, int cellSize, Base Base, List<Base> bases, Color[] colours, List<Player> players, GraphicsDevice graphicsDevice)
@@ -158,6 +161,15 @@ namespace King_of_the_Maze
             //        Move(1, 0); // Right
             //        break;
             //}
+        }
+
+        public Player DespawnPlayer()
+        {
+            if (_lives == 0)
+            {
+                return this;
+            }
+            return null;
         }
 
         private void PlayerMoveMent(int dx, int dy)

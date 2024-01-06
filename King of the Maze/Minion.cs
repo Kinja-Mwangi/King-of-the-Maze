@@ -18,7 +18,7 @@ namespace King_of_the_Maze
         private Player _player;
         private int _cellSize;
         private Vector2 _position;
-        private int _movementTimer = 0;
+        private int _movementTimer;
         private int _movementInterval = 9; // Adjust this value for slower or faster movement
         private int _currentDirectionX;
         private int _currentDirectionY;
@@ -28,6 +28,8 @@ namespace King_of_the_Maze
         public List<Minion> _minions = new List<Minion>();
         private int _minionLifeTime = 5300; //gives a minion the lifespan of about 1 minute 30 seconds
         private int _minionLifeTimer;
+        private int _minionAttackTimer;
+        private int _minionAttackInterval = 180; //gives a minion a roughly 3 second cooldown between attacks
         private Color _minionColour;
         public Player _owner;
         private Base _base;
@@ -90,22 +92,22 @@ namespace King_of_the_Maze
                 }
                 else
                 {
-                    //write the _player._position to a txt file to check it is accurate and updating
-                    string fileName = "Test-PlayerPositionTracking.txt";
-                    FileStream appendText = File.Open(fileName, FileMode.Append);
-                    using StreamWriter write = new StreamWriter(appendText);
-                    {
-                        write.WriteLine(_player._position);
-                    }
-                    write.Close();
+                    ////write the _player._position to a txt file to check it is accurate and updating
+                    //string fileName = "Test-PlayerPositionTracking.txt";
+                    //FileStream appendText = File.Open(fileName, FileMode.Append);
+                    //using StreamWriter write = new StreamWriter(appendText);
+                    //{
+                    //    write.WriteLine(_player._position);
+                    //}
+                    //write.Close();
 
-                    string fileName1 = "Test-PlayerPosList.txt";
-                    FileStream appendText1 = File.Open(fileName1, FileMode.Append);
-                    using StreamWriter write1 = new StreamWriter(appendText1);
-                    {
-                        write1.WriteLine(String.Join(", ", _playerPosList));
-                    }
-                    write1.Close();
+                    //string fileName1 = "Test-PlayerPosList.txt";
+                    //FileStream appendText1 = File.Open(fileName1, FileMode.Append);
+                    //using StreamWriter write1 = new StreamWriter(appendText1);
+                    //{
+                    //    write1.WriteLine(String.Join(", ", _playerPosList));
+                    //}
+                    //write1.Close();
 
                     if (_playerPosList.Count() > 0 && _playerPosList.Last() != _player._position)
                     {
@@ -144,13 +146,13 @@ namespace King_of_the_Maze
                 if (current == targetPosition)
                 {
                     //write the ReconstructPath(parentMap, _position, targetPosition) to a txt file to check it is accurate and updating
-                    string fileName = "Test-ShortestPathTracking.txt";
-                    FileStream appendText = File.Open(fileName, FileMode.Append);
-                    using StreamWriter write = new StreamWriter(appendText);
-                    {
-                        write.WriteLine(String.Join(", ", ReconstructPath(parentMap, _position, targetPosition)));
-                    }
-                    write.Close();
+                    //string fileName = "Test-ShortestPathTracking.txt";
+                    //FileStream appendText = File.Open(fileName, FileMode.Append);
+                    //using StreamWriter write = new StreamWriter(appendText);
+                    //{
+                    //    write.WriteLine(String.Join(", ", ReconstructPath(parentMap, _position, targetPosition)));
+                    //}
+                    //write.Close();
 
                     // Reconstruct the path
                     return ReconstructPath(parentMap, _position, targetPosition);
@@ -213,13 +215,13 @@ namespace King_of_the_Maze
                 }
             }
 
-            string fileName = "Test-Neighbours.txt";
-            FileStream appendText = File.Open(fileName, FileMode.Append);
-            using StreamWriter write = new StreamWriter(appendText);
-            {
-                write.WriteLine(String.Join(", ", neighbors));
-            }
-            write.Close();
+            //string fileName = "Test-Neighbours.txt";
+            //FileStream appendText = File.Open(fileName, FileMode.Append);
+            //using StreamWriter write = new StreamWriter(appendText);
+            //{
+            //    write.WriteLine(String.Join(", ", neighbors));
+            //}
+            //write.Close();
 
             return neighbors;
         }
@@ -231,13 +233,13 @@ namespace King_of_the_Maze
             {
                 Vector2 nextNode = path[0];
 
-                string fileName = "nextNode.txt";
-                FileStream appendText = File.Open(fileName, FileMode.Append);
-                using StreamWriter write = new StreamWriter(appendText);
-                {
-                    write.WriteLine(nextNode);
-                }
-                write.Close();
+                //string fileName = "nextNode.txt";
+                //FileStream appendText = File.Open(fileName, FileMode.Append);
+                //using StreamWriter write = new StreamWriter(appendText);
+                //{
+                //    write.WriteLine(nextNode);
+                //}
+                //write.Close();
 
 
                 // Update the minion's position
@@ -276,27 +278,42 @@ namespace King_of_the_Maze
         {
             _position.X = newX;
             _position.Y = newY;
-            string fileName = "_position.txt";
-            FileStream appendText = File.Open(fileName, FileMode.Append);
-            using StreamWriter write = new StreamWriter(appendText);
-            {
-                write.WriteLine(_position);
-            }
-            write.Close();
+            //string fileName = "_position.txt";
+            //FileStream appendText = File.Open(fileName, FileMode.Append);
+            //using StreamWriter write = new StreamWriter(appendText);
+            //{
+            //    write.WriteLine(_position);
+            //}
+            //write.Close();
         }
 
         public void Attack()
         {
             foreach (Player player in _players)
             {
-                if (_position == player._position && _owner != player)
+                if (_position == player._position && _owner != player && (_minionAttackTimer == _minionAttackInterval || player._initialHit))
                 {
                     player._lives--;
+                    player._initialHit = false;
+                    _minionAttackTimer = 0;
+                }
+                _minionAttackTimer++;
+            }
+            foreach (Player player in _players)
+            {
+                if (!player._initialHit)
+                {
+                    if (player._inititalHitResetTimer == player._initialHitResetInterval)
+                    {
+                        player._initialHit = true;
+                        player._inititalHitResetTimer = 0;
+                    }
+                    player._inititalHitResetTimer++;
                 }
             }
         }
 
-        public Minion DespawnMinions()
+        public Minion DespawnMinion()
         {
             if (_minionLifeTimer == _minionLifeTime || _lives == 0)
             {

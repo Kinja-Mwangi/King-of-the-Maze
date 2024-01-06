@@ -126,6 +126,30 @@ namespace King_of_the_Maze
             }
         }
 
+        public Player GameOver(List<Player> players, List<Base> bases)
+        {
+            if (players.Count == 1)
+            {
+                return players[0];
+            }
+            foreach (Player player in players) 
+            {
+                int basesCaptured = 0;
+                foreach (Base Base in bases)
+                {
+                    if (Base._owner == player)
+                    {
+                        basesCaptured++;
+                    }
+                }
+                if (basesCaptured == bases.Count)
+                {
+                    return player;
+                }
+            }
+            return null;
+        }
+
         public void PrintMaze(SpriteBatch sb, GraphicsDeviceManager gd)
         {
             for (int i = 0; i < mazeSize; i++)

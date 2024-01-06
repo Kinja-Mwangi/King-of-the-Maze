@@ -92,12 +92,20 @@ namespace King_of_the_Maze
                 Exit();
 
             // TODO: Add your update logic here
+            List<Player> removePlayers = new List<Player>();
             foreach (Player player in _players)
             {
                 player.Move();
+                removePlayers.Add(player.DespawnPlayer());
             }
+
+            foreach (Player removePlayer in removePlayers)
+            {
+                _players.Remove(removePlayer);
+            }
+
             //_minion.Move();
-            if (_spawnTimer == _spawnInterval && _minions.Count < _maxMinionCount)
+            if (_spawnTimer >= _spawnInterval && _minions.Count < _maxMinionCount)
             {
                 _bases[rng.Next(0, _bases.Count)].SpawnMinions(_minions);
                 _spawnTimer = 0;
@@ -109,35 +117,37 @@ namespace King_of_the_Maze
             {
                 minion.HandleMovement();
                 minion.Attack();
-                removeMinions.Add(minion.DespawnMinions());
+                removeMinions.Add(minion.DespawnMinion());
             }
 
-            if (_minions.Count == _maxMinionCount)
+            foreach (Minion removeMinion in removeMinions)
             {
-                foreach (Minion removeMinion in removeMinions)
-                {
-                    _minions.Remove(removeMinion);
-                }
+                _minions.Remove(removeMinion);
             }
 
-            string fileName = "RemoveMinions.txt";
-            FileStream appendText = File.Open(fileName, FileMode.Append);
-            using StreamWriter write = new StreamWriter(appendText);
-            {
-                foreach (Minion removeMinion in _minions)
-                {
-                    write.WriteLine(removeMinion);
-                }
-            }
-            write.Close();
+            //string fileName = "RemoveMinions.txt";
+            //FileStream appendText = File.Open(fileName, FileMode.Append);
+            //using StreamWriter write = new StreamWriter(appendText);
+            //{
+            //    foreach (Minion removeMinion in _minions)
+            //    {
+            //        write.WriteLine(removeMinion);
+            //    }
+            //}
+            //write.Close();
 
-            string fileName1 = "MinionsCount.txt";
-            FileStream appendText1 = File.Open(fileName1, FileMode.Append);
-            using StreamWriter write1 = new StreamWriter(appendText1);
+            //string fileName1 = "MinionsCount.txt";
+            //FileStream appendText1 = File.Open(fileName1, FileMode.Append);
+            //using StreamWriter write1 = new StreamWriter(appendText1);
+            //{
+            //    write1.WriteLine(_minions.Count);
+            //}
+            //write1.Close();
+
+            if (_maze.GameOver(_players, _bases) != null)
             {
-                write1.WriteLine(_minions.Count);
+                //add some gameover screen and logic to maybe restart the game
             }
-            write1.Close();
 
             base.Update(gameTime);
         }
