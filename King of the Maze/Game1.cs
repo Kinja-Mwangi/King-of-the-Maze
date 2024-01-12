@@ -14,6 +14,7 @@ namespace King_of_the_Maze
     {
         public GraphicsDeviceManager _graphics;
         public SpriteBatch _spriteBatch;
+        private GameStates _gameStates;
         private Maze _maze;
         private Base _base;
         private Player _player;
@@ -41,6 +42,7 @@ namespace King_of_the_Maze
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            _gameStates = new GameStates();
             _maze = new Maze(_mazeSize, _cellSize);
             for (int i = 0; i < _numberOfPlayers; i++)
             {
@@ -158,6 +160,7 @@ namespace King_of_the_Maze
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
+            _gameStates.Draw(_spriteBatch);
             _spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
             foreach (Player player in _players)
             {
