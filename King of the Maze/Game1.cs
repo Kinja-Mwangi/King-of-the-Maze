@@ -14,7 +14,6 @@ namespace King_of_the_Maze
     {
         public GraphicsDeviceManager _graphics;
         public SpriteBatch _spriteBatch;
-        private GameStates _gameStates;
         private Maze _maze;
         private Base _base;
         private Player _player;
@@ -30,7 +29,14 @@ namespace King_of_the_Maze
         private int _numberOfPlayers = 2;
         private List<Player> _players = new List<Player>();
         public Random rng = new Random();
-        public Color[] _colours = { Color.Green, Color.Purple, Color.Blue, Color.HotPink}; 
+        public Color[] _colours = { Color.Green, Color.Purple, Color.Blue, Color.HotPink};
+        public enum GameState
+        {
+            GameMenu,
+            GamePlaying,
+            GamePaused,
+            GameOver
+        }
 
         public Game1()
         {
