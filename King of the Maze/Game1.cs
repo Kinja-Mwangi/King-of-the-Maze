@@ -14,6 +14,7 @@ namespace King_of_the_Maze
     {
         public GraphicsDeviceManager _graphics;
         public SpriteBatch _spriteBatch;
+        private MainMenu _mainMenu;
         private Maze _maze;
         private Base _base;
         private Player _player;
@@ -48,7 +49,6 @@ namespace King_of_the_Maze
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            _gameStates = new GameStates();
             _maze = new Maze(_mazeSize, _cellSize);
             for (int i = 0; i < _numberOfPlayers; i++)
             {
@@ -83,9 +83,10 @@ namespace King_of_the_Maze
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            Content.RootDirectory = "Content";
 
             // TODO: use this.Content to load your game content here
-
+            _mainMenu.textFont = Content.Load<SpriteFont>("Crang");
             GraphicsDevice.SetRenderTarget(_mazeBuffer);
             GraphicsDevice.Clear(Color.Transparent); // Clear the buffer
             _spriteBatch.Begin();
@@ -166,21 +167,21 @@ namespace King_of_the_Maze
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
-            _gameStates.Draw(_spriteBatch);
-            _spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
-            foreach (Player player in _players)
-            {
-                player.Draw(_spriteBatch);
-            }
-            //_minion.Draw(_spriteBatch);
-            foreach (Minion minion in _minions)
-            {
-                minion.Draw(_spriteBatch);
-            }
-            foreach (Base Base in _bases)
-            {
-                Base.Draw(_spriteBatch);
-            }
+            _mainMenu.Draw(_spriteBatch);
+            //_spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
+            //foreach (Player player in _players)
+            //{
+            //    player.Draw(_spriteBatch);
+            //}
+            ////_minion.Draw(_spriteBatch);
+            //foreach (Minion minion in _minions)
+            //{
+            //    minion.Draw(_spriteBatch);
+            //}
+            //foreach (Base Base in _bases)
+            //{
+            //    Base.Draw(_spriteBatch);
+            //}
             _spriteBatch.End();
             base.Draw(gameTime);
         }
