@@ -31,13 +31,7 @@ namespace King_of_the_Maze
         private List<Player> _players = new List<Player>();
         public Random rng = new Random();
         public Color[] _colours = { Color.Green, Color.Purple, Color.Blue, Color.HotPink};
-        public enum GameState
-        {
-            GameMenu,
-            GamePlaying,
-            GamePaused,
-            GameOver
-        }
+        private GameState _currentState;
 
         public Game1()
         {
@@ -49,7 +43,9 @@ namespace King_of_the_Maze
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            _currentState = GameState.GameMenu;
             _maze = new Maze(_mazeSize, _cellSize);
+            _mainMenu = new MainMenu(_maze);
             for (int i = 0; i < _numberOfPlayers; i++)
             {
                 _player = new Player(_maze, _cellSize, _base, _bases, _colours, _players, GraphicsDevice);
@@ -83,7 +79,7 @@ namespace King_of_the_Maze
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            Content.RootDirectory = "Content";
+            //Content.RootDirectory = "Content";
 
             // TODO: use this.Content to load your game content here
             _mainMenu.textFont = Content.Load<SpriteFont>("Crang");
@@ -101,61 +97,64 @@ namespace King_of_the_Maze
                 Exit();
 
             // TODO: Add your update logic here
-            List<Player> removePlayers = new List<Player>();
-            foreach (Player player in _players)
+            if (_currentState == GameState.GamePlaying)
             {
-                player.Move();
-                removePlayers.Add(player.DespawnPlayer());
-            }
+                List<Player> removePlayers = new List<Player>();
+                foreach (Player player in _players)
+                {
+                    player.Move();
+                    removePlayers.Add(player.DespawnPlayer());
+                }
 
-            foreach (Player removePlayer in removePlayers)
-            {
-                _players.Remove(removePlayer);
-            }
+                foreach (Player removePlayer in removePlayers)
+                {
+                    _players.Remove(removePlayer);
+                }
 
-            //_minion.Move();
-            if (_spawnTimer >= _spawnInterval && _minions.Count < _maxMinionCount)
-            {
-                _bases[rng.Next(0, _bases.Count)].SpawnMinions(_minions);
-                _spawnTimer = 0;
-            }
-            _spawnTimer++;
+                //_minion.Move();
+                if (_spawnTimer >= _spawnInterval && _minions.Count < _maxMinionCount)
+                {
+                    _bases[rng.Next(0, _bases.Count)].SpawnMinions(_minions);
+                    _spawnTimer = 0;
+                }
+                _spawnTimer++;
 
-            List<Minion> removeMinions = new List<Minion>();
-            foreach (Minion minion in _minions)
-            {
-                minion.HandleMovement();
-                minion.Attack();
-                removeMinions.Add(minion.DespawnMinion());
-            }
+                List<Minion> removeMinions = new List<Minion>();
+                foreach (Minion minion in _minions)
+                {
+                    minion.HandleMovement();
+                    minion.Attack();
+                    removeMinions.Add(minion.DespawnMinion());
+                }
 
-            foreach (Minion removeMinion in removeMinions)
-            {
-                _minions.Remove(removeMinion);
-            }
+                foreach (Minion removeMinion in removeMinions)
+                {
+                    _minions.Remove(removeMinion);
+                }
 
-            //string fileName = "RemoveMinions.txt";
-            //FileStream appendText = File.Open(fileName, FileMode.Append);
-            //using StreamWriter write = new StreamWriter(appendText);
-            //{
-            //    foreach (Minion removeMinion in _minions)
-            //    {
-            //        write.WriteLine(removeMinion);
-            //    }
-            //}
-            //write.Close();
+                //string fileName = "RemoveMinions.txt";
+                //FileStream appendText = File.Open(fileName, FileMode.Append);
+                //using StreamWriter write = new StreamWriter(appendText);
+                //{
+                //    foreach (Minion removeMinion in _minions)
+                //    {
+                //        write.WriteLine(removeMinion);
+                //    }
+                //}
+                //write.Close();
 
-            //string fileName1 = "MinionsCount.txt";
-            //FileStream appendText1 = File.Open(fileName1, FileMode.Append);
-            //using StreamWriter write1 = new StreamWriter(appendText1);
-            //{
-            //    write1.WriteLine(_minions.Count);
-            //}
-            //write1.Close();
+                //string fileName1 = "MinionsCount.txt";
+                //FileStream appendText1 = File.Open(fileName1, FileMode.Append);
+                //using StreamWriter write1 = new StreamWriter(appendText1);
+                //{
+                //    write1.WriteLine(_minions.Count);
+                //}
+                //write1.Close();
 
-            if (_maze.GameOver(_players, _bases) != null)
-            {
-                //add some gameover screen and logic to maybe restart the game
+                if (_maze.GameOver(_players, _bases) != null)
+                {
+                    //add some gameover screen and logic to maybe restart the game
+                }
             }
 
             base.Update(gameTime);
@@ -164,24 +163,31 @@ namespace King_of_the_Maze
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+            //GraphicsDevice.Clear(Color.White);
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
-            _mainMenu.Draw(_spriteBatch);
-            //_spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
-            //foreach (Player player in _players)
-            //{
-            //    player.Draw(_spriteBatch);
-            //}
-            ////_minion.Draw(_spriteBatch);
-            //foreach (Minion minion in _minions)
-            //{
-            //    minion.Draw(_spriteBatch);
-            //}
-            //foreach (Base Base in _bases)
-            //{
-            //    Base.Draw(_spriteBatch);
-            //}
+            if (_currentState == GameState.GameMenu)
+            {
+                _mainMenu.Draw(_spriteBatch, GraphicsDevice);
+            }
+            else if (_currentState == GameState.GamePlaying)
+            {
+                _spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
+                foreach (Player player in _players)
+                {
+                    player.Draw(_spriteBatch);
+                }
+                //_minion.Draw(_spriteBatch);
+                foreach (Minion minion in _minions)
+                {
+                    minion.Draw(_spriteBatch);
+                }
+                foreach (Base Base in _bases)
+                {
+                    Base.Draw(_spriteBatch);
+                }
+            }
             _spriteBatch.End();
             base.Draw(gameTime);
         }
