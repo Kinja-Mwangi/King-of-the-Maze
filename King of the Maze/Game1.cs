@@ -31,7 +31,8 @@ namespace King_of_the_Maze
         private List<Player> _players = new List<Player>();
         public Random rng = new Random();
         public Color[] _colours = { Color.Green, Color.Purple, Color.Blue, Color.HotPink};
-        private GameState _currentState;
+        public GameState _currentState;
+        public MouseState _mouseState;
 
         public Game1()
         {
@@ -43,15 +44,18 @@ namespace King_of_the_Maze
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            _currentState = GameState.GameMenu;
             _maze = new Maze(_mazeSize, _cellSize);
-            _mainMenu = new MainMenu(_maze);
+            _graphics.PreferredBackBufferWidth = _maze.mazeSize * _maze.cellSize;
+            _graphics.PreferredBackBufferHeight = _maze.mazeSize * _maze.cellSize;
+            _graphics.ApplyChanges();
+            _mazeBuffer = new RenderTarget2D(GraphicsDevice, _maze.mazeSize * _maze.cellSize, _maze.mazeSize * _maze.cellSize);
+            _mainMenu = new MainMenu(GraphicsDevice);
             for (int i = 0; i < _numberOfPlayers; i++)
             {
                 _player = new Player(_maze, _cellSize, _base, _bases, _colours, _players, GraphicsDevice);
                 _players.Add(_player);
             }
-            for (int i = 0; i < _mazeSize; i++)
+            for (int i = 0; i < _mazeSize; i++) //adds bases to the maze
             {
                 for (int j = 0; j < _mazeSize; j++)
                 {
@@ -62,10 +66,8 @@ namespace King_of_the_Maze
                     }
                 }
             }
-            _graphics.PreferredBackBufferWidth = _maze.mazeSize * _maze.cellSize;
-            _graphics.PreferredBackBufferHeight = _maze.mazeSize * _maze.cellSize;
-            _graphics.ApplyChanges();
-            _mazeBuffer = new RenderTarget2D(GraphicsDevice, _maze.mazeSize * _maze.cellSize, _maze.mazeSize * _maze.cellSize);
+            _currentState = GameState.GameMenu;
+
             //_minion = new Minion(_maze, _cellSize, GraphicsDevice);
             //for (int i = 0; i < numberOfMinions; i++)
             //{
@@ -82,7 +84,8 @@ namespace King_of_the_Maze
             //Content.RootDirectory = "Content";
 
             // TODO: use this.Content to load your game content here
-            _mainMenu.textFont = Content.Load<SpriteFont>("Crang");
+            _mainMenu._titleFont = Content.Load<SpriteFont>("Title");
+            _mainMenu._buttonsText = Content.Load<SpriteFont>("MainMenuButtonsText");
             GraphicsDevice.SetRenderTarget(_mazeBuffer);
             GraphicsDevice.Clear(Color.Transparent); // Clear the buffer
             _spriteBatch.Begin();
@@ -97,7 +100,11 @@ namespace King_of_the_Maze
                 Exit();
 
             // TODO: Add your update logic here
-            if (_currentState == GameState.GamePlaying)
+            if (_currentState == GameState.GameMenu)
+            {
+                _mainMenu.Buttons(ref _currentState, _mouseState);
+            }
+            else if (_currentState == GameState.GamePlaying)
             {
                 List<Player> removePlayers = new List<Player>();
                 foreach (Player player in _players)
@@ -169,7 +176,7 @@ namespace King_of_the_Maze
             _spriteBatch.Begin();
             if (_currentState == GameState.GameMenu)
             {
-                _mainMenu.Draw(_spriteBatch, GraphicsDevice);
+                _mainMenu.Draw(_spriteBatch);
             }
             else if (_currentState == GameState.GamePlaying)
             {
