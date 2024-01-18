@@ -24,6 +24,7 @@ namespace King_of_the_Maze
         private string _instructionsButtonText;
         private Rectangle _instructionsButton;
         private string _settingsButtonText;
+        private Rectangle _settingsButton;
         private GraphicsDevice _graphicsDevice;
 
         public MainMenu(GraphicsDevice graphicsDevice)
@@ -39,18 +40,25 @@ namespace King_of_the_Maze
             _buttonTexture.SetData(new[] { Color.White });
         }
 
-        public void Buttons(ref GameState currentState, MouseState mouseState)
+        public GameState Buttons(MouseState mouseState)
         {
-            _startButton = new Rectangle((_graphicsDevice.Viewport.Width - (int)_buttonsText.MeasureString(_startButtonText).X) / 2, (int)_titleFont.MeasureString(_titleText).Y + 100, (int)_buttonsText.MeasureString(_startButtonText).X + 20, (int)_buttonsText.MeasureString(_startButtonText).Y + 20);
-            _instructionsButton = new Rectangle((_graphicsDevice.Viewport.Width - (int)_buttonsText.MeasureString(_instructionsButtonText).X) / 2, _startButton.Y + 150, (int)_buttonsText.MeasureString(_instructionsButtonText).X + 20, (int)_buttonsText.MeasureString(_instructionsButtonText).Y + 20);
+            _startButton = InitializeButton((int)_titleFont.MeasureString(_titleText).Y + 120, _startButtonText);
+            _instructionsButton = InitializeButton(_startButton.Y + 150, _instructionsButtonText);
+            _settingsButton = InitializeButton(_instructionsButton.Y + 150, _settingsButtonText);
             mouseState = Mouse.GetState();
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
                 if (_startButton.Contains(mouseState.Position))
                 {
-                    currentState = GameState.GamePlaying;
+                    return GameState.GamePlaying;
                 }
             }
+            return GameState.GameMenu;
+        }
+
+        private Rectangle InitializeButton(int heightSpacing, string buttonText)
+        {
+            return new Rectangle((_graphicsDevice.Viewport.Width - (int)_buttonsText.MeasureString(buttonText).X) / 2, heightSpacing, (int)_buttonsText.MeasureString(buttonText).X + 20, (int)_buttonsText.MeasureString(buttonText).Y + 30);
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -59,6 +67,7 @@ namespace King_of_the_Maze
             spriteBatch.DrawString(_titleFont, _titleText, new Vector2((_graphicsDevice.Viewport.Width - _titleFont.MeasureString(_titleText).X) / 2, 50), Color.Black);
             DrawButton(_startButtonText, _startButton, spriteBatch);
             DrawButton(_instructionsButtonText, _instructionsButton, spriteBatch);
+            DrawButton(_settingsButtonText, _settingsButton, spriteBatch);
         }
 
         private void DrawButton(string buttonText, Rectangle button, SpriteBatch spriteBatch)

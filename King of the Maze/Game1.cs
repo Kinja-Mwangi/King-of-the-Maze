@@ -102,7 +102,7 @@ namespace King_of_the_Maze
             // TODO: Add your update logic here
             if (_currentState == GameState.GameMenu)
             {
-                _mainMenu.Buttons(ref _currentState, _mouseState);
+                _currentState = _mainMenu.Buttons(_mouseState);
             }
             else if (_currentState == GameState.GamePlaying)
             {
