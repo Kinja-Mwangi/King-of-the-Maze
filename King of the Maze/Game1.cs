@@ -15,6 +15,7 @@ namespace King_of_the_Maze
         public GraphicsDeviceManager _graphics;
         public SpriteBatch _spriteBatch;
         private MainMenu _mainMenu;
+        private SettingsMenu _settingsMenu;
         private Maze _maze;
         private Base _base;
         private Player _player;
@@ -50,6 +51,7 @@ namespace King_of_the_Maze
             _graphics.ApplyChanges();
             _mazeBuffer = new RenderTarget2D(GraphicsDevice, _maze.mazeSize * _maze.cellSize, _maze.mazeSize * _maze.cellSize);
             _mainMenu = new MainMenu(GraphicsDevice);
+            _settingsMenu = new SettingsMenu(GraphicsDevice, _mainMenu._buttons);
             for (int i = 0; i < _numberOfPlayers; i++)
             {
                 _player = new Player(_maze, _cellSize, _base, _bases, _colours, _players, GraphicsDevice);
@@ -85,7 +87,7 @@ namespace King_of_the_Maze
 
             // TODO: use this.Content to load your game content here
             _mainMenu._titleFont = Content.Load<SpriteFont>("Title");
-            _mainMenu._buttonsText = Content.Load<SpriteFont>("MainMenuButtonsText");
+            _mainMenu._buttonsTextFont = Content.Load<SpriteFont>("MainMenuButtonsText");
             GraphicsDevice.SetRenderTarget(_mazeBuffer);
             GraphicsDevice.Clear(Color.Transparent); // Clear the buffer
             _spriteBatch.Begin();
@@ -102,7 +104,15 @@ namespace King_of_the_Maze
             // TODO: Add your update logic here
             if (_currentState == GameState.GameMenu)
             {
-                _currentState = _mainMenu.Buttons(_mouseState);
+                _mainMenu.HandleButtons(_mouseState, ref _currentState);
+            }
+            else if (_currentState == GameState.GameInstructions)
+            {
+
+            }
+            else if (_currentState == GameState.GameSettings)
+            {
+                
             }
             else if (_currentState == GameState.GamePlaying)
             {
