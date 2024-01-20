@@ -13,9 +13,8 @@ namespace King_of_the_Maze
     public class Game1 : Game
     {
         public GraphicsDeviceManager _graphics;
-        public SpriteBatch _spriteBatch;
+        public static SpriteBatch _spriteBatch;
         private MainMenu _mainMenu;
-        private SettingsMenu _settingsMenu;
         private Maze _maze;
         private Base _base;
         private Player _player;
@@ -28,12 +27,12 @@ namespace King_of_the_Maze
         public int _maxMinionCount = 10;
         public int _spawnTimer;
         public int _spawnInterval = 300;
-        private int _numberOfPlayers = 2;
+        public static int _numberOfPlayers = 1;
         private List<Player> _players = new List<Player>();
         public Random rng = new Random();
-        public Color[] _colours = { Color.Green, Color.Purple, Color.Blue, Color.HotPink};
+        public Color[] _colours = { Color.Green, Color.Purple, Color.Blue};
         public GameState _currentState;
-        public MouseState _mouseState;
+        public static MouseState _mouseState;
 
         public Game1()
         {
@@ -51,7 +50,6 @@ namespace King_of_the_Maze
             _graphics.ApplyChanges();
             _mazeBuffer = new RenderTarget2D(GraphicsDevice, _maze.mazeSize * _maze.cellSize, _maze.mazeSize * _maze.cellSize);
             _mainMenu = new MainMenu(GraphicsDevice);
-            _settingsMenu = new SettingsMenu(GraphicsDevice, _mainMenu._buttons);
             for (int i = 0; i < _numberOfPlayers; i++)
             {
                 _player = new Player(_maze, _cellSize, _base, _bases, _colours, _players, GraphicsDevice);
@@ -86,8 +84,8 @@ namespace King_of_the_Maze
             //Content.RootDirectory = "Content";
 
             // TODO: use this.Content to load your game content here
-            _mainMenu._titleFont = Content.Load<SpriteFont>("Title");
-            _mainMenu._buttonsTextFont = Content.Load<SpriteFont>("MainMenuButtonsText");
+            _mainMenu._titleFont = Content.Load<SpriteFont>("Crang85");
+            _mainMenu._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
             GraphicsDevice.SetRenderTarget(_mazeBuffer);
             GraphicsDevice.Clear(Color.Transparent); // Clear the buffer
             _spriteBatch.Begin();
@@ -98,21 +96,17 @@ namespace King_of_the_Maze
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape) || _currentState == GameState.GameExit)
                 Exit();
 
             // TODO: Add your update logic here
             if (_currentState == GameState.GameMenu)
             {
-                _mainMenu.HandleButtons(_mouseState, ref _currentState);
+                _mainMenu.HandleButtons(ref _currentState);
             }
             else if (_currentState == GameState.GameInstructions)
             {
 
-            }
-            else if (_currentState == GameState.GameSettings)
-            {
-                
             }
             else if (_currentState == GameState.GamePlaying)
             {

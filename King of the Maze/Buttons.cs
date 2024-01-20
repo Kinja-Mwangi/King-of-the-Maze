@@ -13,7 +13,9 @@ namespace King_of_the_Maze
 {
     public class Buttons
     {
+        List<Rectangle> _changePlayerCountButtons = new List<Rectangle>();
         public int _buttonType;
+        private KeyboardState _keyboardState;
         private GraphicsDevice _graphicsDevice; 
         public string _buttonText;
         protected Texture2D _buttonTexture;
@@ -44,7 +46,7 @@ namespace King_of_the_Maze
                     currentState = ChangeGameState(GameState.GameInstructions);
                     break;
                 case 2:
-                    currentState = ChangeGameState(GameState.GameSettings);
+                    currentState = ChangeGameState(GameState.GameExit);
                     break;
             }
 

@@ -66,54 +66,78 @@ namespace King_of_the_Maze
         public void HandleInput()
         {
             KeyboardState keyboardState = Keyboard.GetState();
-
-            if (_playerNumber == 1)
+            switch (_playerNumber)
             {
-                // Move the player based on the WASD keys
-                if (keyboardState.IsKeyDown(Keys.W))
-                {
-                    PlayerMoveMent(0, -1); // Up
-                }
-                /*else*/
-                if (keyboardState.IsKeyDown(Keys.S))
-                {
-                    PlayerMoveMent(0, 1); // Down
-                }
+                case 1:
+                    // Move the player based on the WASD keys
+                    if (keyboardState.IsKeyDown(Keys.W))
+                    {
+                        PlayerMoveMent(0, -1); // Up
+                    }
+                    /*else*/
+                    if (keyboardState.IsKeyDown(Keys.S))
+                    {
+                        PlayerMoveMent(0, 1); // Down
+                    }
 
-                /*else*/
-                if (keyboardState.IsKeyDown(Keys.A))
-                {
-                    PlayerMoveMent(-1, 0); // Left
-                }
-                /*else*/
-                if (keyboardState.IsKeyDown(Keys.D))
-                {
-                    PlayerMoveMent(1, 0); // Right
-                }
-            }
-            else if (_playerNumber == 2)
-            {
-                // Move the player based on the WASD keys
-                if (keyboardState.IsKeyDown(Keys.Up))
-                {
-                    PlayerMoveMent(0, -1); // Up
-                }
-                /*else*/
-                if (keyboardState.IsKeyDown(Keys.Down))
-                {
-                    PlayerMoveMent(0, 1); // Down
-                }
+                    /*else*/
+                    if (keyboardState.IsKeyDown(Keys.A))
+                    {
+                        PlayerMoveMent(-1, 0); // Left
+                    }
+                    /*else*/
+                    if (keyboardState.IsKeyDown(Keys.D))
+                    {
+                        PlayerMoveMent(1, 0); // Right
+                    }
+                    break;
+                case 2:
+                    // Move the player based on the arrow keys
+                    if (keyboardState.IsKeyDown(Keys.Up))
+                    {
+                        PlayerMoveMent(0, -1); // Up
+                    }
+                    /*else*/
+                    if (keyboardState.IsKeyDown(Keys.Down))
+                    {
+                        PlayerMoveMent(0, 1); // Down
+                    }
 
-                /*else*/
-                if (keyboardState.IsKeyDown(Keys.Left))
-                {
-                    PlayerMoveMent(-1, 0); // Left
-                }
-                /*else*/
-                if (keyboardState.IsKeyDown(Keys.Right))
-                {
-                    PlayerMoveMent(1, 0); // Right
-                }
+                    /*else*/
+                    if (keyboardState.IsKeyDown(Keys.Left))
+                    {
+                        PlayerMoveMent(-1, 0); // Left
+                    }
+                    /*else*/
+                    if (keyboardState.IsKeyDown(Keys.Right))
+                    {
+                        PlayerMoveMent(1, 0); // Right
+                    }
+                    break;
+                case 3:
+                    // Move the player based on the keypad keys
+                    if (keyboardState.IsKeyDown(Keys.NumPad8))
+                    {
+                        PlayerMoveMent(0, -1); // Up
+                    }
+                    /*else*/
+                    if (keyboardState.IsKeyDown(Keys.NumPad5))
+                    {
+                        PlayerMoveMent(0, 1); // Down
+                    }
+
+                    /*else*/
+                    if (keyboardState.IsKeyDown(Keys.NumPad6))
+                    {
+                        PlayerMoveMent(-1, 0); // Left
+                    }
+                    /*else*/
+                    if (keyboardState.IsKeyDown(Keys.Right))
+                    {
+                        PlayerMoveMent(1, 0); // Right
+                    }
+                    break;
+
             }
             //// Move the player based on the WASD keys
             //if (keyboardState.IsKeyDown(Keys.W))
@@ -136,14 +160,14 @@ namespace King_of_the_Maze
             //{
             //    PlayerMoveMent(1, 0); // Right
             //}
-            if (keyboardState.IsKeyDown(Keys.T))
-            {
-                do
-                {
-                    _position = new Vector2(rng.Next(1, _maze.mazeSize), rng.Next(1, _maze.mazeSize));
-                }
-                while (_maze.maze[(int)_position.X, (int)_position.Y] == 0);
-            }
+            //if (keyboardState.IsKeyDown(Keys.T))
+            //{
+            //    do
+            //    {
+            //        _position = new Vector2(rng.Next(1, _maze.mazeSize), rng.Next(1, _maze.mazeSize));
+            //    }
+            //    while (_maze.maze[(int)_position.X, (int)_position.Y] == 0);
+            //}
 
             //for random movement
             //switch(rng.Next(0, 3))

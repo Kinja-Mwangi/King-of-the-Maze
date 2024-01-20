@@ -13,17 +13,31 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin MainMenuButtonsText.spritefont
+#begin Crang25.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:MainMenuButtonsText.spritefont
+/build:Crang25.spritefont
 
-#begin Title.spritefont
+#begin Crang45.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Title.spritefont
+/build:Crang45.spritefont
+
+#begin Crang65.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Crang65.spritefont
+
+#begin Crang85.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Crang85.spritefont
 
