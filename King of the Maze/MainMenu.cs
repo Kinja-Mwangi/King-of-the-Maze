@@ -55,11 +55,11 @@ namespace King_of_the_Maze
 
         private void InitializeButtons()
         {
-            _startButton = new Buttons("Start", _graphicsDevice, (int)_titleFont.MeasureString(_titleText).Y + 120, _buttonsTextFont, 0);
+            _startButton = new Buttons("Start", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("Start").X) / 2, (int)_titleFont.MeasureString(_titleText).Y + 120, _buttonsTextFont, 0);
             _buttons.Add(_startButton);
-            _instructionsButton = new Buttons("Instructions", _graphicsDevice, _startButton._buttonShape.Y + 150, _buttonsTextFont, 1);
+            _instructionsButton = new Buttons("Instructions", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("Instructions").X) / 2, _startButton._buttonShape.Y + 150, _buttonsTextFont, 1);
             _buttons.Add(_instructionsButton);
-            _exitButton = new Buttons("Exit", _graphicsDevice, _instructionsButton._buttonShape.Y + 150, _buttonsTextFont, 2);
+            _exitButton = new Buttons("Exit", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("Exit").X) / 2, _instructionsButton._buttonShape.Y + 150, _buttonsTextFont, 2);
             _buttons.Add(_exitButton);
         }
 

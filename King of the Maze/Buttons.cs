@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace King_of_the_Maze
 {
@@ -22,15 +23,17 @@ namespace King_of_the_Maze
         public Rectangle _buttonShape;
         public SpriteFont _buttonTextFont;
         public int _verticalSpacing;
-        public Buttons(string buttonText, GraphicsDevice graphicsDevice, int verticalSpacing, SpriteFont buttonTextFont, int buttonType)
+        public int _horizontalSpacing;
+        public Buttons(string buttonText, GraphicsDevice graphicsDevice, int horizontalSpacing, int verticalSpacing, SpriteFont buttonTextFont, int buttonType)
         {
             _graphicsDevice = graphicsDevice;
             _buttonText = buttonText;
             _buttonType = buttonType;
             _buttonTextFont = buttonTextFont;
             _verticalSpacing = verticalSpacing;
+            _horizontalSpacing = horizontalSpacing;
             _buttonText = buttonText;
-            _buttonShape = new Rectangle((_graphicsDevice.Viewport.Width - (int)_buttonTextFont.MeasureString(buttonText).X) / 2, _verticalSpacing, (int)_buttonTextFont.MeasureString(buttonText).X + 20, (int)_buttonTextFont.MeasureString(buttonText).Y + 30);
+            _buttonShape = new Rectangle(_horizontalSpacing, _verticalSpacing, (int)_buttonTextFont.MeasureString(buttonText).X + 20, (int)_buttonTextFont.MeasureString(buttonText).Y + 30);
             _buttonTexture = new Texture2D(_graphicsDevice, 1, 1);
             _buttonTexture.SetData(new[] { Color.White });
         }
@@ -40,13 +43,19 @@ namespace King_of_the_Maze
             switch (_buttonType)
             {
                 case 0:
-                    currentState = ChangeGameState(GameState.GamePlaying);
+                    currentState = ChangeGameState(GameState.StartMenu);
                     break;
                 case 1:
                     currentState = ChangeGameState(GameState.GameInstructions);
                     break;
                 case 2:
                     currentState = ChangeGameState(GameState.GameExit);
+                    break;
+                case 3:
+                    currentState = ChangeGameState(GameState.GamePlaying);
+                    break;
+                case 4:
+                    //add logic to load a saved game and change game state to playing
                     break;
             }
 

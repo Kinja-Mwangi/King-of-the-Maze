@@ -15,6 +15,7 @@ namespace King_of_the_Maze
         public GraphicsDeviceManager _graphics;
         public static SpriteBatch _spriteBatch;
         private MainMenu _mainMenu;
+        public static StartMenu _startMenu;
         private Maze _maze;
         private Base _base;
         private Player _player;
@@ -50,6 +51,7 @@ namespace King_of_the_Maze
             _graphics.ApplyChanges();
             _mazeBuffer = new RenderTarget2D(GraphicsDevice, _maze.mazeSize * _maze.cellSize, _maze.mazeSize * _maze.cellSize);
             _mainMenu = new MainMenu(GraphicsDevice);
+            _startMenu = new StartMenu(GraphicsDevice);
             for (int i = 0; i < _numberOfPlayers; i++)
             {
                 _player = new Player(_maze, _cellSize, _base, _bases, _colours, _players, GraphicsDevice);
@@ -66,7 +68,7 @@ namespace King_of_the_Maze
                     }
                 }
             }
-            _currentState = GameState.GameMenu;
+            _currentState = GameState.MainMenu;
 
             //_minion = new Minion(_maze, _cellSize, GraphicsDevice);
             //for (int i = 0; i < numberOfMinions; i++)
@@ -86,6 +88,8 @@ namespace King_of_the_Maze
             // TODO: use this.Content to load your game content here
             _mainMenu._titleFont = Content.Load<SpriteFont>("Crang85");
             _mainMenu._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
+            _startMenu._titleFont = Content.Load<SpriteFont>("Crang85");
+            _startMenu._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
             GraphicsDevice.SetRenderTarget(_mazeBuffer);
             GraphicsDevice.Clear(Color.Transparent); // Clear the buffer
             _spriteBatch.Begin();
@@ -100,9 +104,13 @@ namespace King_of_the_Maze
                 Exit();
 
             // TODO: Add your update logic here
-            if (_currentState == GameState.GameMenu)
+            if (_currentState == GameState.MainMenu)
             {
                 _mainMenu.HandleButtons(ref _currentState);
+            }
+            else if (_currentState == GameState.StartMenu)
+            {
+                _startMenu.HandleButtons(ref _currentState);
             }
             else if (_currentState == GameState.GameInstructions)
             {
@@ -178,9 +186,13 @@ namespace King_of_the_Maze
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
-            if (_currentState == GameState.GameMenu)
+            if (_currentState == GameState.MainMenu)
             {
                 _mainMenu.Draw(_spriteBatch);
+            }
+            else if (_currentState == GameState.StartMenu)
+            {
+                _startMenu.Draw(_spriteBatch);
             }
             else if (_currentState == GameState.GamePlaying)
             {
