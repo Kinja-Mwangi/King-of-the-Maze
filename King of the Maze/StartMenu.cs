@@ -56,15 +56,15 @@ namespace King_of_the_Maze
 
         public void InitializeButtons()
         {
-            _newGameButton = new Buttons("NewGame", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonTextFont.MeasureString(buttonText).X) / 2, (int)_titleFont.MeasureString(_titleText).Y + 120, _buttonsTextFont, 3);
+            _newGameButton = new Buttons("NewGame", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("NewGame").X) / 2, (int)_titleFont.MeasureString(_titleText).Y + 120, _buttonsTextFont, 3);
             _buttons.Add(_newGameButton);
-            _loadGameButton = new Buttons("LoadGame", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonTextFont.MeasureString(buttonText).X) / 2, _newGameButton._buttonShape.Y + 150, _buttonsTextFont, 4);
+            _loadGameButton = new Buttons("LoadGame", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("LoadGame").X) / 2, _newGameButton._buttonShape.Y + 150, _buttonsTextFont, 4);
             _buttons.Add(_loadGameButton);
-            _1player = new Buttons("1", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonTextFont.MeasureString(buttonText).X) / 2, _loadGameButton._buttonShape.Y + 150, _buttonsTextFont, 5);
+            _1player = new Buttons("1", _graphicsDevice, ((_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("1").X) / 2) - 100, _loadGameButton._buttonShape.Y + 150, _buttonsTextFont, 5);
             _buttons.Add(_1player);
-            _2players = new Buttons("2", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonTextFont.MeasureString(buttonText).X) / 2, _1player._buttonShape.Y, _buttonsTextFont, 6);
+            _2players = new Buttons("2", _graphicsDevice, ((_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("2").X) / 2), _1player._buttonShape.Y, _buttonsTextFont, 6);
             _buttons.Add(_2players); 
-            _3players = new Buttons("3", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonTextFont.MeasureString(buttonText).X) / 2, _1player._buttonShape.Y, _buttonsTextFont, 7);
+            _3players = new Buttons("3", _graphicsDevice, ((_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("3").X) / 2) + 100, _1player._buttonShape.Y, _buttonsTextFont, 7);
             _buttons.Add(_3players);
         }
 
