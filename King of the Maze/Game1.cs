@@ -52,11 +52,16 @@ namespace King_of_the_Maze
             _mazeBuffer = new RenderTarget2D(GraphicsDevice, _maze.mazeSize * _maze.cellSize, _maze.mazeSize * _maze.cellSize);
             _mainMenu = new MainMenu(GraphicsDevice);
             _startMenu = new StartMenu(GraphicsDevice);
-            for (int i = 0; i < _numberOfPlayers; i++)
+            if (_currentState == GameState.GamePlaying)
             {
-                _player = new Player(_maze, _cellSize, _base, _bases, _colours, _players, GraphicsDevice);
-                _players.Add(_player);
+                for (int i = 0; i < _numberOfPlayers; i++)
+                {
+                    _player = new Player(_maze, _cellSize, _base, _bases, _colours, _players, GraphicsDevice);
+                    _players.Add(_player);
+                }
+
             }
+
             for (int i = 0; i < _mazeSize; i++) //adds bases to the maze
             {
                 for (int j = 0; j < _mazeSize; j++)

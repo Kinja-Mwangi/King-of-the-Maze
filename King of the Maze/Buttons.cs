@@ -58,6 +58,15 @@ namespace King_of_the_Maze
                 case 4:
                     //add logic to load a saved game and change game state to playing
                     break;
+                case 5:
+                    Game1._numberOfPlayers = 1;
+                    break;
+                case 6:
+                    Game1._numberOfPlayers = 2;
+                    break;
+                case 7:
+                    Game1._numberOfPlayers = 3;
+                    break;
             }
 
             GameState ChangeGameState(GameState newState)
