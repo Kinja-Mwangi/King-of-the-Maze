@@ -28,12 +28,13 @@ namespace King_of_the_Maze
         public int _maxMinionCount = 10;
         public int _spawnTimer;
         public int _spawnInterval = 300;
-        public static int _numberOfPlayers = 1;
+        public static int _numberOfPlayers;
         private List<Player> _players = new List<Player>();
         public Random rng = new Random();
         public Color[] _colours = { Color.Green, Color.Purple, Color.Blue};
         public GameState _currentState;
         public static MouseState _mouseState;
+        private bool _playersSpawned = false;
 
         public Game1()
         {
@@ -52,15 +53,7 @@ namespace King_of_the_Maze
             _mazeBuffer = new RenderTarget2D(GraphicsDevice, _maze.mazeSize * _maze.cellSize, _maze.mazeSize * _maze.cellSize);
             _mainMenu = new MainMenu(GraphicsDevice);
             _startMenu = new StartMenu(GraphicsDevice);
-            if (_currentState == GameState.GamePlaying)
-            {
-                for (int i = 0; i < _numberOfPlayers; i++)
-                {
-                    _player = new Player(_maze, _cellSize, _base, _bases, _colours, _players, GraphicsDevice);
-                    _players.Add(_player);
-                }
 
-            }
 
             for (int i = 0; i < _mazeSize; i++) //adds bases to the maze
             {
@@ -123,6 +116,15 @@ namespace King_of_the_Maze
             }
             else if (_currentState == GameState.GamePlaying)
             {
+                if (!_playersSpawned)
+                {
+                    for (int i = 0; i < _numberOfPlayers; i++)
+                    {
+                        _player = new Player(_maze, _cellSize, _base, _bases, _colours, _players, GraphicsDevice);
+                        _players.Add(_player);
+                    }
+                    _playersSpawned = true;
+                }
                 List<Player> removePlayers = new List<Player>();
                 foreach (Player player in _players)
                 {

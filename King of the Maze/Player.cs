@@ -127,12 +127,12 @@ namespace King_of_the_Maze
                     }
 
                     /*else*/
-                    if (keyboardState.IsKeyDown(Keys.NumPad6))
+                    if (keyboardState.IsKeyDown(Keys.NumPad4))
                     {
                         PlayerMoveMent(-1, 0); // Left
                     }
                     /*else*/
-                    if (keyboardState.IsKeyDown(Keys.Right))
+                    if (keyboardState.IsKeyDown(Keys.NumPad6))
                     {
                         PlayerMoveMent(1, 0); // Right
                     }

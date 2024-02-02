@@ -25,6 +25,7 @@ namespace King_of_the_Maze
         protected Texture2D _buttonTexture;
         private Buttons _instructionsButton;
         protected GraphicsDevice _graphicsDevice;
+        private bool _buttonsInitialized = false;
 
         public MainMenu(GraphicsDevice graphicsDevice)
         {
