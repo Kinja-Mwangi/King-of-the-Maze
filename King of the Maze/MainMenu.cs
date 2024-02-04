@@ -37,19 +37,25 @@ namespace King_of_the_Maze
 
         public void HandleButtons(ref GameState currentState)
         {
-            InitializeButtons();
-            Game1._mouseState = Mouse.GetState();
-            if (Game1._mouseState.LeftButton == ButtonState.Pressed)
+            if (!_buttonsInitialized)
             {
-                foreach (Buttons button in _buttons)
+                InitializeButtons();
+            }
+            Game1._mouseState = Mouse.GetState();
+            foreach (Buttons button in _buttons)
+            {
+                button._buttonTextColour = new Color(255 - button._buttonColour.R, 255 - button._buttonColour.G, 255 - button._buttonColour.B);
+                if (button._buttonShape.Contains(Game1._mouseState.Position))
                 {
-                    for (int i = 0; i < _buttons.Count; i++)
+                    button._buttonColour = Color.White;
+                    if (Game1._mouseState.LeftButton == ButtonState.Pressed)
                     {
-                        if (button._buttonType == i && button._buttonShape.Contains(Game1._mouseState.Position))
-                        {
-                            button.ButtonPressed(ref currentState);
-                        }
+                        button.ButtonPressed(ref currentState);
                     }
+                }
+                else
+                {
+                    button._buttonColour = Color.Black;
                 }
             }
         }
@@ -62,6 +68,7 @@ namespace King_of_the_Maze
             _buttons.Add(_instructionsButton);
             _exitButton = new Buttons("Exit", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("Exit").X) / 2, _instructionsButton._buttonShape.Y + 150, _buttonsTextFont, 2);
             _buttons.Add(_exitButton);
+            _buttonsInitialized = true;
         }
 
         public void Draw(SpriteBatch spriteBatch)

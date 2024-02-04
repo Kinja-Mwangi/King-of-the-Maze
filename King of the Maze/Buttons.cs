@@ -25,6 +25,11 @@ namespace King_of_the_Maze
         public SpriteFont _buttonTextFont;
         public int _verticalSpacing;
         public int _horizontalSpacing;
+        public Color _buttonColour;
+        public Color _buttonTextColour;
+        //private int _buttonTimer;
+        //private int _buttonTimerInterval;
+
         public Buttons(string buttonText, GraphicsDevice graphicsDevice, int horizontalSpacing, int verticalSpacing, SpriteFont buttonTextFont, int buttonType)
         {
             _graphicsDevice = graphicsDevice;
@@ -37,6 +42,7 @@ namespace King_of_the_Maze
             _buttonShape = new Rectangle(_horizontalSpacing, _verticalSpacing, (int)_buttonTextFont.MeasureString(buttonText).X + 20, (int)_buttonTextFont.MeasureString(buttonText).Y + 30);
             _buttonTexture = new Texture2D(_graphicsDevice, 1, 1);
             _buttonTexture.SetData(new[] { Color.White });
+            _buttonColour = Color.Black;
         }
 
         public void ButtonPressed(ref GameState currentState)
@@ -60,12 +66,15 @@ namespace King_of_the_Maze
                     break;
                 case 5:
                     Game1._numberOfPlayers = 1;
+                    _buttonColour = Color.Green;
                     break;
                 case 6:
                     Game1._numberOfPlayers = 2;
+                    _buttonColour = Color.Purple;
                     break;
                 case 7:
                     Game1._numberOfPlayers = 3;
+                    _buttonColour = Color.Blue;
                     break;
             }
 
@@ -77,8 +86,12 @@ namespace King_of_the_Maze
 
         public void DrawButton(string buttonText, Rectangle button, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_buttonTexture, button, Color.Black);
-            spriteBatch.DrawString(_buttonTextFont, buttonText, new Vector2(button.X + ((button.Width - _buttonTextFont.MeasureString(buttonText).X) / 2), button.Y + ((button.Height - _buttonTextFont.MeasureString(buttonText).Y) / 2)), Color.White);
+            if (_buttonType == Game1._numberOfPlayers + 4)
+            {
+                _buttonColour = Game1._colours[Game1._numberOfPlayers - 1];
+            }
+            spriteBatch.Draw(_buttonTexture, button, _buttonColour);
+            spriteBatch.DrawString(_buttonTextFont, buttonText, new Vector2(button.X + ((button.Width - _buttonTextFont.MeasureString(buttonText).X) / 2), button.Y + ((button.Height - _buttonTextFont.MeasureString(buttonText).Y) / 2)), _buttonTextColour);
         }
     }
 }

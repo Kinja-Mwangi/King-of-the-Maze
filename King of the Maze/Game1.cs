@@ -28,10 +28,10 @@ namespace King_of_the_Maze
         public int _maxMinionCount = 10;
         public int _spawnTimer;
         public int _spawnInterval = 300;
-        public static int _numberOfPlayers;
+        public static int _numberOfPlayers = 1;
         private List<Player> _players = new List<Player>();
         public Random rng = new Random();
-        public Color[] _colours = { Color.Green, Color.Purple, Color.Blue};
+        public static Color[] _colours = { Color.Green, Color.Purple, Color.Blue};
         public GameState _currentState;
         public static MouseState _mouseState;
         private bool _playersSpawned = false;
@@ -120,7 +120,7 @@ namespace King_of_the_Maze
                 {
                     for (int i = 0; i < _numberOfPlayers; i++)
                     {
-                        _player = new Player(_maze, _cellSize, _base, _bases, _colours, _players, GraphicsDevice);
+                        _player = new Player(_maze, _cellSize, _base, _bases, _players, GraphicsDevice);
                         _players.Add(_player);
                     }
                     _playersSpawned = true;
@@ -129,6 +129,7 @@ namespace King_of_the_Maze
                 foreach (Player player in _players)
                 {
                     player.Move();
+                    player._playerColour = _colours[player._playerNumber - 1] * 0.25f * player._lives; //makes the player become more transparent as they lose lives
                     removePlayers.Add(player.DespawnPlayer());
                 }
 

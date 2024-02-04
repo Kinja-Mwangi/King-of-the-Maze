@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Drawing.Text;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace King_of_the_Maze
@@ -34,23 +35,31 @@ namespace King_of_the_Maze
             _graphicsDevice = graphicsDevice;
             _startMenuTexture = new Texture2D(_graphicsDevice, 1, 1);
             _startMenuTexture.SetData(new[] { Color.White });
+            _buttonTexture = new Texture2D(_graphicsDevice, 1, 1);
+            _buttonTexture.SetData(new[] { Color.White });
         }
 
         public void HandleButtons(ref GameState currentState)
         {
-            InitializeButtons();
-            Game1._mouseState = Mouse.GetState();
-            if (Game1._mouseState.LeftButton == ButtonState.Pressed)
+            if (!_buttonsInitialized)
             {
-                foreach (Buttons button in _buttons)
+                InitializeButtons();
+            }
+            Game1._mouseState = Mouse.GetState();
+            foreach (Buttons button in _buttons)
+            {
+                button._buttonTextColour = new Color(255 - button._buttonColour.R, 255 - button._buttonColour.G, 255 - button._buttonColour.B);
+                if (button._buttonShape.Contains(Game1._mouseState.Position))
                 {
-                    for (int i = 0; i < _buttons.Count; i++)
+                    button._buttonColour = Color.White;
+                    if (Game1._mouseState.LeftButton == ButtonState.Pressed)
                     {
-                        if (button._buttonType == i && button._buttonShape.Contains(Game1._mouseState.Position))
-                        {
-                            button.ButtonPressed(ref currentState);
-                        }
+                        button.ButtonPressed(ref currentState);
                     }
+                }
+                else
+                {
+                    button._buttonColour = Color.Black;
                 }
             }
         }
@@ -61,7 +70,7 @@ namespace King_of_the_Maze
             _buttons.Add(_newGameButton);
             _loadGameButton = new Buttons("LoadGame", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("LoadGame").X) / 2, _newGameButton._buttonShape.Y + 150, _buttonsTextFont, 4);
             _buttons.Add(_loadGameButton);
-            _1player = new Buttons("1", _graphicsDevice, ((_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("1").X) / 2) - 100, _loadGameButton._buttonShape.Y + (int)_buttonsTextFont.MeasureString("Number of Players").Y + 150, _buttonsTextFont, 5);
+            _1player = new Buttons("1", _graphicsDevice, ((_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("1").X) / 2) - 100, _loadGameButton._buttonShape.Y + (int)_buttonsTextFont.MeasureString("Number of Players :").Y + 180, _buttonsTextFont, 5);
             _buttons.Add(_1player);
             _2players = new Buttons("2", _graphicsDevice, ((_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("2").X) / 2), _1player._buttonShape.Y, _buttonsTextFont, 6);
             _buttons.Add(_2players); 
@@ -77,7 +86,10 @@ namespace King_of_the_Maze
                 spriteBatch.Draw(_startMenuTexture, new Rectangle(0, 0, _graphicsDevice.Viewport.Width, _graphicsDevice.Viewport.Height), Color.Red);
                 spriteBatch.DrawString(_titleFont, _titleText, new Vector2((_graphicsDevice.Viewport.Width - _titleFont.MeasureString(_titleText).X) / 2, 50), Color.Black);
                 //draw a rectangle for the number of players text
-                spriteBatch.DrawString(_buttonsTextFont, "Number of Players", new Vector2((_graphicsDevice.Viewport.Width - _buttonsTextFont.MeasureString("Number of Players").X) / 2, _loadGameButton._buttonShape.Y + 150), Color.Black);
+                Rectangle numberOfPlayersRectangle = new Rectangle((_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("Number of Players :").X) / 2, _loadGameButton._buttonShape.Y + 150, (int)_buttonsTextFont.MeasureString("Number of Players :").X + 20, (int)_buttonsTextFont.MeasureString("Number of Players :").Y + 30);
+                spriteBatch.Draw(_buttonTexture, numberOfPlayersRectangle, Color.Black);
+                spriteBatch.DrawString(_buttonsTextFont, "Number of Players :", new Vector2(numberOfPlayersRectangle.X + (numberOfPlayersRectangle.Width - _buttonsTextFont.MeasureString("Number of Players :").X) / 2, numberOfPlayersRectangle.Y + (numberOfPlayersRectangle.Height - _buttonsTextFont.MeasureString("Number of Players :").Y) / 2), Color.White);
+
                 foreach (Buttons button in _buttons)
                 {
                     button.DrawButton(button._buttonText, button._buttonShape, spriteBatch);
