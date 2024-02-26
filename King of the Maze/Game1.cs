@@ -19,6 +19,7 @@ namespace King_of_the_Maze
         private Maze _maze;
         private Base _base;
         private Player _player;
+        private PauseMenu _pauseMenu;
         private Minion _minion;
         private RenderTarget2D _mazeBuffer;
         private List<Minion> _minions = new List<Minion>();
@@ -53,6 +54,7 @@ namespace King_of_the_Maze
             _mazeBuffer = new RenderTarget2D(GraphicsDevice, _maze.mazeSize * _maze.cellSize, _maze.mazeSize * _maze.cellSize);
             _mainMenu = new MainMenu(GraphicsDevice);
             _startMenu = new StartMenu(GraphicsDevice);
+            _pauseMenu = new PauseMenu(GraphicsDevice);
 
 
             for (int i = 0; i < _mazeSize; i++) //adds bases to the maze
@@ -88,6 +90,7 @@ namespace King_of_the_Maze
             _mainMenu._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
             _startMenu._titleFont = Content.Load<SpriteFont>("Crang85");
             _startMenu._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
+            _pauseMenu._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
             GraphicsDevice.SetRenderTarget(_mazeBuffer);
             GraphicsDevice.Clear(Color.Transparent); // Clear the buffer
             _spriteBatch.Begin();
@@ -95,6 +98,7 @@ namespace King_of_the_Maze
             _spriteBatch.End();
             GraphicsDevice.SetRenderTarget(null);
         }
+
 
         protected override void Update(GameTime gameTime)
         {
@@ -110,12 +114,20 @@ namespace King_of_the_Maze
             {
                 _startMenu.HandleButtons(ref _currentState);
             }
+            else if (_currentState == GameState.GamePaused)
+            {
+                _pauseMenu.HandleButtons(ref _currentState);
+            }
             else if (_currentState == GameState.GameInstructions)
             {
 
             }
             else if (_currentState == GameState.GamePlaying)
             {
+                if (Keyboard.GetState().IsKeyDown(Keys.P))
+                {
+                    _currentState = GameState.GamePaused;
+                }
                 if (!_playersSpawned)
                 {
                     for (int i = 0; i < _numberOfPlayers; i++)
@@ -218,6 +230,11 @@ namespace King_of_the_Maze
                 {
                     Base.Draw(_spriteBatch);
                 }
+            }
+            else if (_currentState == GameState.GamePaused)
+            {
+                //_spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
+                _pauseMenu.Draw(_spriteBatch);
             }
             _spriteBatch.End();
             base.Draw(gameTime);

@@ -21,8 +21,9 @@ namespace King_of_the_Maze
         protected GraphicsDevice _graphicsDevice;
         public Rectangle _pauseMenuRectangle;
 
-        public PauseMenu()
+        public PauseMenu(GraphicsDevice graphicsDevice)
         {
+            _graphicsDevice = graphicsDevice;
             _pauseMenuTexture = new Texture2D(_graphicsDevice, 1, 1);
             _pauseMenuTexture.SetData(new[] { Color.White });
             _buttonTexture = new Texture2D(_graphicsDevice, 1, 1);
