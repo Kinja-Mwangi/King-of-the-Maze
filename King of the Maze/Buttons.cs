@@ -77,6 +77,7 @@ namespace King_of_the_Maze
                     _buttonColour = Color.Blue;
                     break;
                 case 8:
+                    Game1._gameInitialized = false;
                     currentState = ChangeGameState(GameState.MainMenu);
                     break;
             }

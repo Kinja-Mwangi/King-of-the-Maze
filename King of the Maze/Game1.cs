@@ -36,6 +36,7 @@ namespace King_of_the_Maze
         public GameState _currentState;
         public static MouseState _mouseState;
         private bool _playersSpawned = false;
+        public static bool _gameInitialized = false;
 
         public Game1()
         {
@@ -56,7 +57,6 @@ namespace King_of_the_Maze
             _startMenu = new StartMenu(GraphicsDevice);
             _pauseMenu = new PauseMenu(GraphicsDevice);
 
-
             for (int i = 0; i < _mazeSize; i++) //adds bases to the maze
             {
                 for (int j = 0; j < _mazeSize; j++)
@@ -76,6 +76,7 @@ namespace King_of_the_Maze
             //    _minion = new Minion(_maze, _player, _cellSize, GraphicsDevice);
             //    _minions.Add(_minion);
             //}
+            _gameInitialized = true;
 
             base.Initialize();
         }
@@ -108,6 +109,11 @@ namespace King_of_the_Maze
             // TODO: Add your update logic here
             if (_currentState == GameState.MainMenu)
             {
+                if (!_gameInitialized)
+                {
+                    ResetGame();
+                    _gameInitialized = true;
+                }
                 _mainMenu.HandleButtons(ref _currentState);
             }
             else if (_currentState == GameState.StartMenu)
@@ -199,6 +205,12 @@ namespace King_of_the_Maze
             base.Update(gameTime);
         }
 
+        protected void ResetGame()
+        {
+            base.Initialize();
+            base.LoadContent();
+        }
+
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -233,7 +245,7 @@ namespace King_of_the_Maze
             }
             else if (_currentState == GameState.GamePaused)
             {
-                //_spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
+                _spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
                 _pauseMenu.Draw(_spriteBatch);
             }
             _spriteBatch.End();

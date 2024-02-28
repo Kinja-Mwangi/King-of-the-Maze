@@ -73,7 +73,7 @@ namespace King_of_the_Maze
                 {
                     button1 = button;
                 }
-                _pauseMenuRectangle = new Rectangle(_resumeButton._buttonShape.Left - 50, _resumeButton._buttonShape.Top - 50, button._buttonShape.Right + 50, _saveGameButton._buttonShape.Bottom + 50);
+                _pauseMenuRectangle = new Rectangle(_resumeButton._buttonShape.Left - 50, _resumeButton._buttonShape.Top - 50, button._buttonShape.Right + 50, _quitButton._buttonShape.Bottom - 150); //for some reason the bottom of the quit button is not where it should be
             }
 
             _buttonsInitialized = true;
