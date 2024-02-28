@@ -20,6 +20,7 @@ namespace King_of_the_Maze
         protected Texture2D _pauseMenuTexture;
         protected GraphicsDevice _graphicsDevice;
         public Rectangle _pauseMenuRectangle;
+        private bool _buttonsInitialized = false;
 
         public PauseMenu(GraphicsDevice graphicsDevice)
         {
@@ -32,10 +33,10 @@ namespace King_of_the_Maze
 
         public void HandleButtons(ref GameState currentState)
         {
-            //if (!_buttonsInitialized)
-            //{
-            //    InitializeButtons();
-            //}
+            if (!_buttonsInitialized)
+            {
+                InitializeButtons();
+            }
             Game1._mouseState = Mouse.GetState();
             foreach (Buttons button in _buttons)
             {
@@ -63,18 +64,30 @@ namespace King_of_the_Maze
             _buttons.Add(_saveGameButton);
             _resumeButton = new Buttons("Resume", _graphicsDevice, _saveGameButton._buttonShape.X, _saveGameButton._buttonShape.Y - (int)_buttonsTextFont.MeasureString("Resume").Y - 100, _buttonsTextFont, 3);
             _buttons.Add(_resumeButton);
-            _quitButton = new Buttons("Quit", _graphicsDevice, _saveGameButton._buttonShape.X, _saveGameButton._buttonShape.Y + (int)_buttonsTextFont.MeasureString("Quit").Y + 100, _buttonsTextFont, 0);
+            _quitButton = new Buttons("Quit", _graphicsDevice, _saveGameButton._buttonShape.X, _saveGameButton._buttonShape.Y + (int)_buttonsTextFont.MeasureString("Quit").Y + 100, _buttonsTextFont, 8);
             _buttons.Add(_quitButton);
-            //_pauseMenuRectangle = new Rectangle(((_graphicsDevice.Viewport.Width - _resumeButton._buttonShape.Width) / 2) - 100, ((_graphicsDevice.Viewport.Height - _resumeButton._buttonShape.Height) / 2) - 100, _saveGameButton._buttonShape.Width + 100, _saveGameButton._buttonShape.Height + _resumeButton._buttonShape.Height + _quitButton._buttonShape.Height + 100);
-            _pauseMenuRectangle = new Rectangle((_resumeButton._buttonShape.Y / 2) - 100, (_resumeButton._buttonShape.Height / 2) - 100, _saveGameButton._buttonShape.Width + 100, _quitButton._buttonShape.Y + 100);
+            Buttons button1 = new Buttons("", _graphicsDevice, 0, 0, _buttonsTextFont, 0);
+            foreach (Buttons button in _buttons) //finds the button with the largest width to use to size the pause menu rectangle
+            {
+                if (button._buttonShape.Width > button1._buttonShape.Width)
+                {
+                    button1 = button;
+                }
+                _pauseMenuRectangle = new Rectangle(_resumeButton._buttonShape.Left - 50, _resumeButton._buttonShape.Top - 50, button._buttonShape.Right + 50, _saveGameButton._buttonShape.Bottom + 50);
+            }
+
+            _buttonsInitialized = true;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_pauseMenuTexture, _pauseMenuRectangle, Color.Red);
-            foreach (Buttons button in _buttons)
+            if (_buttonsInitialized)
             {
-                button.DrawButton(button._buttonText, button._buttonShape, spriteBatch);
+                spriteBatch.Draw(_pauseMenuTexture, _pauseMenuRectangle, Color.Red);
+                foreach (Buttons button in _buttons)
+                {
+                    button.DrawButton(button._buttonText, button._buttonShape, spriteBatch);
+                }
             }
         }
     }

@@ -76,6 +76,9 @@ namespace King_of_the_Maze
                     Game1._numberOfPlayers = 3;
                     _buttonColour = Color.Blue;
                     break;
+                case 8:
+                    currentState = ChangeGameState(GameState.MainMenu);
+                    break;
             }
 
             GameState ChangeGameState(GameState newState)
