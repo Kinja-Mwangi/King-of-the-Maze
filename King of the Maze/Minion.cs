@@ -17,7 +17,7 @@ namespace King_of_the_Maze
         private Maze _maze;
         private Player _player;
         private int _cellSize;
-        private Vector2 _position;
+        public Vector2 _position;
         private int _movementTimer;
         private int _movementInterval = 9; // Adjust this value for slower or faster movement
         private int _currentDirectionX;
@@ -32,7 +32,7 @@ namespace King_of_the_Maze
         private int _minionAttackInterval = 180; //gives a minion a roughly 3 second cooldown between attacks
         private Color _minionColour;
         public Player _owner;
-        private Base _base;
+        public Base _base;
         public int _lives;
         private List<Player> _players;
 
@@ -327,7 +327,7 @@ namespace King_of_the_Maze
         {
             // Draw the minion as a single pixel
             Rectangle minionRect = new Rectangle((int)(_position.X * _cellSize), (int)(_position.Y * _cellSize), _cellSize, _cellSize);
-            spriteBatch.Draw(_minionTexture, minionRect, _minionColour);
+            spriteBatch.Draw(_minionTexture, minionRect, _minionColour * 0.5f * _lives);
             //to do - draw the minion as a triangle making it easier to differentiate from players
         }
     }

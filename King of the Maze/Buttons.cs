@@ -62,7 +62,7 @@ namespace King_of_the_Maze
                     currentState = ChangeGameState(GameState.GamePlaying);
                     break;
                 case 4:
-                    //add logic to load a saved game and change game state to playing
+                    currentState = ChangeGameState(GameState.GameSaving);
                     break;
                 case 5:
                     Game1._numberOfPlayers = 1;

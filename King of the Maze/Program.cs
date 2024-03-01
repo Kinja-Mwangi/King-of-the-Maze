@@ -12,6 +12,8 @@ public enum GameState
     GameInstructions,
     GamePlaying,
     GamePaused,
+    GameSaving,
+    GameLoading,
     GameOver, 
     GameExit
 }

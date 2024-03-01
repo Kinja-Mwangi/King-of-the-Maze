@@ -218,7 +218,7 @@ namespace King_of_the_Maze
         {
             // Draw the player as a single pixel
             Rectangle playerRect = new Rectangle((int)(_position.X * _cellSize), (int)(_position.Y * _cellSize), _cellSize, _cellSize);
-            spriteBatch.Draw(_playerTexture, playerRect, _playerColour); // You can customize the player's appearance here
+            spriteBatch.Draw(_playerTexture, playerRect, _playerColour * 0.25f * _lives); // You can customize the player's appearance here
         }
     }
 }

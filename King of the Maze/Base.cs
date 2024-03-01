@@ -12,6 +12,7 @@ namespace King_of_the_Maze
 {
     public class Base
     {
+        public int _baseNumber;
         public Vector2 _position;
         public Player _owner;
         public bool _captured;
@@ -24,8 +25,9 @@ namespace King_of_the_Maze
         public List<Player> _players = new List<Player>();
         private Random rng = new Random();
 
-        public Base(Vector2 position, int cellSize, GraphicsDevice graphicsDevice, Maze maze, List<Player> players)
+        public Base(Vector2 position, int cellSize, GraphicsDevice graphicsDevice, Maze maze, List<Player> players, int baseNumber)
         {
+            _baseNumber = baseNumber;
             _position = position;
             _players = players;
             _cellSize = cellSize;
@@ -42,7 +44,7 @@ namespace King_of_the_Maze
             _owner = player;
         }
 
-        public void SpawnMinions(List<Minion> minions)
+        public void SpawnMinions(ref List<Minion> minions)
         {
             Minion minion = new Minion(_maze, _cellSize, _graphicsDevice, minions, this);
             minions.Add(minion);
