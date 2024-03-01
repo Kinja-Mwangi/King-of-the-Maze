@@ -20,7 +20,7 @@ namespace King_of_the_Maze
         private Base _base;
         private Player _player;
         private PauseMenu _pauseMenu;
-        private Minion _minion;
+        //private Minion _minion;
         private RenderTarget2D _mazeBuffer;
         private List<Minion> _minions = new List<Minion>();
         private List<Base> _bases = new List<Base>();
@@ -35,8 +35,8 @@ namespace King_of_the_Maze
         public static Color[] _colours = { Color.Green, Color.Purple, Color.Blue};
         public GameState _currentState;
         public static MouseState _mouseState;
-        private bool _playersSpawned = false;
-        public static bool _gameInitialized = false;
+        private bool _playersSpawned;
+        public static bool _gameInitialized;
 
         public Game1()
         {
@@ -68,6 +68,13 @@ namespace King_of_the_Maze
                     }
                 }
             }
+
+            //for (int i = 0; i < _numberOfPlayers; i++)
+            //{
+            //    _player = new Player(_maze, _cellSize, _base, _bases, _players, GraphicsDevice);
+            //    _players.Add(_player);
+            //}
+
             _currentState = GameState.MainMenu;
 
             //_minion = new Minion(_maze, _cellSize, GraphicsDevice);
@@ -76,6 +83,7 @@ namespace King_of_the_Maze
             //    _minion = new Minion(_maze, _player, _cellSize, GraphicsDevice);
             //    _minions.Add(_minion);
             //}
+            _playersSpawned = false;
             _gameInitialized = true;
 
             base.Initialize();
@@ -112,103 +120,115 @@ namespace King_of_the_Maze
                 if (!_gameInitialized)
                 {
                     ResetGame();
-                    _gameInitialized = true;
                 }
                 _mainMenu.HandleButtons(ref _currentState);
             }
-            else if (_currentState == GameState.StartMenu)
+            else
             {
-                _startMenu.HandleButtons(ref _currentState);
-            }
-            else if (_currentState == GameState.GamePaused)
-            {
-                _pauseMenu.HandleButtons(ref _currentState);
-            }
-            else if (_currentState == GameState.GameInstructions)
-            {
-
-            }
-            else if (_currentState == GameState.GamePlaying)
-            {
-                if (Keyboard.GetState().IsKeyDown(Keys.P))
+                _gameInitialized = false;
+                if (_currentState == GameState.StartMenu)
                 {
-                    _currentState = GameState.GamePaused;
+                    _startMenu.HandleButtons(ref _currentState);
                 }
-                if (!_playersSpawned)
+                else if (_currentState == GameState.GamePaused)
                 {
-                    for (int i = 0; i < _numberOfPlayers; i++)
+                    _pauseMenu.HandleButtons(ref _currentState);
+                }
+                else if (_currentState == GameState.GameInstructions)
+                {
+
+                }
+                else if (_currentState == GameState.GamePlaying)
+                {
+                    if (!_playersSpawned)
                     {
-                        _player = new Player(_maze, _cellSize, _base, _bases, _players, GraphicsDevice);
-                        _players.Add(_player);
+                        for (int i = 0; i < _numberOfPlayers; i++)
+                        {
+                            _player = new Player(_maze, _cellSize, _base, _bases, _players, GraphicsDevice);
+                            _players.Add(_player);
+                        }
+                        _playersSpawned = true;
                     }
-                    _playersSpawned = true;
-                }
-                List<Player> removePlayers = new List<Player>();
-                foreach (Player player in _players)
-                {
-                    player.Move();
-                    player._playerColour = _colours[player._playerNumber - 1] * 0.25f * player._lives; //makes the player become more transparent as they lose lives
-                    removePlayers.Add(player.DespawnPlayer());
-                }
+                    if (Keyboard.GetState().IsKeyDown(Keys.P))
+                    {
+                        _currentState = GameState.GamePaused;
+                    }
+                    List<Player> removePlayers = new List<Player>();
+                    foreach (Player player in _players)
+                    {
+                        player.Move();
+                        player._playerColour = _colours[player._playerNumber - 1] * 0.25f * player._lives; //makes the player become more transparent as they lose lives
+                        removePlayers.Add(player.DespawnPlayer());
+                    }
 
-                foreach (Player removePlayer in removePlayers)
-                {
-                    _players.Remove(removePlayer);
-                }
+                    foreach (Player removePlayer in removePlayers)
+                    {
+                        _players.Remove(removePlayer);
+                    }
 
-                //_minion.Move();
-                if (_spawnTimer >= _spawnInterval && _minions.Count < _maxMinionCount)
-                {
-                    _bases[rng.Next(0, _bases.Count)].SpawnMinions(_minions);
-                    _spawnTimer = 0;
-                }
-                _spawnTimer++;
+                    //_minion.Move();
+                    if (_spawnTimer >= _spawnInterval && _minions.Count <= _maxMinionCount)
+                    {
+                        _bases[rng.Next(0, _bases.Count)].SpawnMinions(_minions);
+                        _spawnTimer = 0;
+                    }
+                    _spawnTimer++;
 
-                List<Minion> removeMinions = new List<Minion>();
-                foreach (Minion minion in _minions)
-                {
-                    minion.HandleMovement();
-                    minion.Attack();
-                    removeMinions.Add(minion.DespawnMinion());
-                }
+                    List<Minion> removeMinions = new List<Minion>();
+                    foreach (Minion minion in _minions)
+                    {
+                        minion.HandleMovement();
+                        minion.Attack();
+                        removeMinions.Add(minion.DespawnMinion());
+                    }
 
-                foreach (Minion removeMinion in removeMinions)
-                {
-                    _minions.Remove(removeMinion);
-                }
+                    foreach (Minion removeMinion in removeMinions)
+                    {
+                        _minions.Remove(removeMinion);
+                    }
 
-                //string fileName = "RemoveMinions.txt";
-                //FileStream appendText = File.Open(fileName, FileMode.Append);
-                //using StreamWriter write = new StreamWriter(appendText);
-                //{
-                //    foreach (Minion removeMinion in _minions)
-                //    {
-                //        write.WriteLine(removeMinion);
-                //    }
-                //}
-                //write.Close();
+                    //string fileName = "RemoveMinions.txt";
+                    //FileStream appendText = File.Open(fileName, FileMode.Append);
+                    //using StreamWriter write = new StreamWriter(appendText);
+                    //{
+                    //    foreach (Minion removeMinion in _minions)
+                    //    {
+                    //        write.WriteLine(removeMinion);
+                    //    }
+                    //}
+                    //write.Close();
 
-                //string fileName1 = "MinionsCount.txt";
-                //FileStream appendText1 = File.Open(fileName1, FileMode.Append);
-                //using StreamWriter write1 = new StreamWriter(appendText1);
-                //{
-                //    write1.WriteLine(_minions.Count);
-                //}
-                //write1.Close();
+                    //string fileName1 = "MinionsCount.txt";
+                    //FileStream appendText1 = File.Open(fileName1, FileMode.Append);
+                    //using StreamWriter write1 = new StreamWriter(appendText1);
+                    //{
+                    //    write1.WriteLine(_minions.Count);
+                    //}
+                    //write1.Close();
 
-                if (_maze.GameOver(_players, _bases) != null)
-                {
-                    //add some gameover screen and logic to maybe restart the game
+                    if (_maze.GameOver(_players, _bases) != null)
+                    {
+                        //add some gameover screen and logic to maybe restart the game
+                    }
                 }
             }
+
 
             base.Update(gameTime);
         }
 
         protected void ResetGame()
         {
-            base.Initialize();
-            base.LoadContent();
+            _players.Clear();
+            _minions.Clear();
+            _bases.Clear();
+            Initialize();
+            LoadContent();
+        }
+
+        protected void SaveGame()
+        {
+            using StreamWriter 
         }
 
         protected override void Draw(GameTime gameTime)
