@@ -23,21 +23,21 @@ namespace King_of_the_Maze
         //private Minion _minion;
         private RenderTarget2D _mazeBuffer;
         private List<Minion> _minions = new List<Minion>();
-        private List<Base> _bases = new List<Base>();
+        public static List<Base> _bases = new List<Base>();
         private int _mazeSize = 91;
         private int _cellSize = 10;
         public int _maxMinionCount = 10;
         public int _spawnTimer;
         public int _spawnInterval = 300;
         public static int _numberOfPlayers = 1;
-        private List<Player> _players = new List<Player>();
+        public static List<Player> _players = new List<Player>();
         public Random rng = new Random();
         public static Color[] _colours = { Color.Green, Color.Purple, Color.Blue};
         public GameState _currentState;
         public static MouseState _mouseState;
         private bool _playersSpawned;
         public static bool _gameInitialized;
-        public bool _gameSaved = true;
+        public static bool _gameSaved = false;
 
         public Game1()
         {
@@ -64,7 +64,7 @@ namespace King_of_the_Maze
                 {
                     if (_maze.maze[i, j] == 2)
                     {
-                        _base = new Base(new Vector2(i, j), _cellSize, GraphicsDevice, _maze, _players, i + 1);
+                        _base = new Base(new Vector2(i, j), _cellSize, GraphicsDevice, _maze);
                         _bases.Add(_base);
                     }
                 }
@@ -124,105 +124,86 @@ namespace King_of_the_Maze
                 }
                 _mainMenu.HandleButtons(ref _currentState);
             }
-            else
+            else if (_currentState == GameState.GameInstructions)
             {
-                _gameInitialized = false;
-                if (_currentState == GameState.StartMenu)
+
+            }
+            else if (_currentState == GameState.StartMenu)
+            {
+                _startMenu.HandleButtons(ref _currentState);
+            }
+            else if (_currentState == GameState.GamePaused)
+            {
+                _pauseMenu.HandleButtons(ref _currentState);
+            }
+            else if (_currentState == GameState.GameSaving)
+            {
+                SaveGame();
+                _currentState = GameState.GamePaused;
+                _gameSaved = true;
+            }
+            else if (_currentState == GameState.GameLoading)
+            {
+                if (Directory.Exists("saveFile"))
                 {
-                    _startMenu.HandleButtons(ref _currentState);
+                    LoadGame();
+                    _currentState = GameState.GamePlaying;
                 }
-                else if (_currentState == GameState.GamePaused)
+            }
+            //_gameSaved = false;
+
+            else if (_currentState == GameState.GamePlaying)
+            {
+                _gameSaved = false;
+                if (!_playersSpawned)
                 {
-                    _pauseMenu.HandleButtons(ref _currentState);
+                    for (int i = 0; i < _numberOfPlayers; i++)
+                    {
+                        _player = new Player(_maze, _cellSize, _bases, _players, GraphicsDevice);
+                        _players.Add(_player);
+                    }
+                    _playersSpawned = true;
                 }
-                else if (_currentState == GameState.GameSaving)
+                if (Keyboard.GetState().IsKeyDown(Keys.P))
                 {
-                    if (!_gameSaved)
-                    {
-                        SaveGame();
-                        _gameSaved = true;
-                        _currentState = GameState.GamePaused;
-                    }
+                    _currentState = GameState.GamePaused;
                 }
-                else
+                List<Player> removePlayers = new List<Player>();
+                foreach (Player player in _players)
                 {
-                    _gameSaved = false;
-                    if (_currentState == GameState.GameInstructions)
-                    {
+                    player.Move();
+                    removePlayers.Add(player.DespawnPlayer());
+                }
 
-                    }
-                    else if (_currentState == GameState.GamePlaying)
-                    {
-                        if (!_playersSpawned)
-                        {
-                            for (int i = 0; i < _numberOfPlayers; i++)
-                            {
-                                _player = new Player(_maze, _cellSize, _base, _bases, _players, GraphicsDevice);
-                                _players.Add(_player);
-                            }
-                            _playersSpawned = true;
-                        }
-                        if (Keyboard.GetState().IsKeyDown(Keys.P))
-                        {
-                            _currentState = GameState.GamePaused;
-                        }
-                        List<Player> removePlayers = new List<Player>();
-                        foreach (Player player in _players)
-                        {
-                            player.Move();
-                            removePlayers.Add(player.DespawnPlayer());
-                        }
+                foreach (Player removePlayer in removePlayers)
+                {
+                    _players.Remove(removePlayer);
+                }
 
-                        foreach (Player removePlayer in removePlayers)
-                        {
-                            _players.Remove(removePlayer);
-                        }
+                //_minion.Move();
+                if (_spawnTimer >= _spawnInterval && _minions.Count <= _maxMinionCount)
+                {
+                    _bases[rng.Next(0, _bases.Count)].SpawnMinions(ref _minions);
+                    _spawnTimer = 0;
+                }
+                _spawnTimer++;
 
-                        //_minion.Move();
-                        if (_spawnTimer >= _spawnInterval && _minions.Count <= _maxMinionCount)
-                        {
-                            _bases[rng.Next(0, _bases.Count)].SpawnMinions(ref _minions);
-                            _spawnTimer = 0;
-                        }
-                        _spawnTimer++;
+                List<Minion> removeMinions = new List<Minion>();
+                foreach (Minion minion in _minions)
+                {
+                    minion.HandleMovement();
+                    minion.Attack();
+                    removeMinions.Add(minion.DespawnMinion());
+                }
 
-                        List<Minion> removeMinions = new List<Minion>();
-                        foreach (Minion minion in _minions)
-                        {
-                            minion.HandleMovement();
-                            minion.Attack();
-                            removeMinions.Add(minion.DespawnMinion());
-                        }
+                foreach (Minion removeMinion in removeMinions)
+                {
+                    _minions.Remove(removeMinion);
+                }
 
-                        foreach (Minion removeMinion in removeMinions)
-                        {
-                            _minions.Remove(removeMinion);
-                        }
-
-                        //string fileName = "RemoveMinions.txt";
-                        //FileStream appendText = File.Open(fileName, FileMode.Append);
-                        //using StreamWriter write = new StreamWriter(appendText);
-                        //{
-                        //    foreach (Minion removeMinion in _minions)
-                        //    {
-                        //        write.WriteLine(removeMinion);
-                        //    }
-                        //}
-                        //write.Close();
-
-                        //string fileName1 = "MinionsCount.txt";
-                        //FileStream appendText1 = File.Open(fileName1, FileMode.Append);
-                        //using StreamWriter write1 = new StreamWriter(appendText1);
-                        //{
-                        //    write1.WriteLine(_minions.Count);
-                        //}
-                        //write1.Close();
-
-                        if (_maze.GameOver(_players, _bases) != null)
-                        {
-                            //add some gameover screen and logic to maybe restart the game
-                        }
-                    }
+                if (_maze.GameOver(_players, _bases) != null)
+                {
+                    //add some gameover screen and logic to maybe restart the game
                 }
 
             }
@@ -242,47 +223,132 @@ namespace King_of_the_Maze
 
         protected void SaveGame()
         {
-            using (StreamWriter saveGame = new StreamWriter("saveFile.txt"))
+            Directory.CreateDirectory("saveFile");
+            using (StreamWriter saveGame = new StreamWriter("saveFile/maze.txt"))
             {
                 for (int y = 0; y < _mazeSize; y++)
                 {
                     for (int x = 0; x < _mazeSize; x++)
                     {
-                        saveGame.Write(_maze.maze[x, y]);
+                        saveGame.WriteLine(_maze.maze[x, y]);
                     }
-                    saveGame.WriteLine("");
+                    //saveGame.WriteLine("");
                 }
+            }
 
-                foreach (Base bases in _bases)
+            using (StreamWriter saveGame = new StreamWriter("saveFile/bases.txt"))
+            {
+                foreach (Base Base in _bases)
                 {
-                    if (bases._owner != null)
+                    if (Base._owner != null)
                     {
-                        saveGame.Write("{0}\n{1}\n{2}", (int)bases._position.X, (int)bases._position.Y, bases._owner._playerNumber);
+                        saveGame.Write("{0}\n{1}\n{2}\n{3}\n", (int)Base._position.X, (int)Base._position.Y, Base._owner._playerNumber, Base._baseNumber);
                     }
                     else
                     {
-                        saveGame.Write("{0}\n{1}\n{2}", (int)bases._position.X, (int)bases._position.Y, 0);
+                        saveGame.Write("{0}\n{1}\n{2}\n{3}\n", (int)Base._position.X, (int)Base._position.Y, 0, Base._baseNumber);
                     }
                 }
-
+            }   
+            
+            using (StreamWriter saveGame = new StreamWriter("saveFile/players.txt"))
+            {
                 foreach (Player player in _players)
                 {
-                    saveGame.Write("{0}\n{1}\n{2}\n{3}", player._playerNumber, player._lives, (int)player._position.X, (int)player._position.Y);
+                    saveGame.Write("{0}\n{1}\n{2}\n", player._lives, (int)player._position.X, (int)player._position.Y);
                 }
+            }
 
+            using (StreamWriter saveGame = new StreamWriter("saveFile/minions.txt"))
+            {
                 foreach (Minion minion in _minions)
                 {
-                    saveGame.Write("{0}\n{1}\n{2}\n{3}", minion._lives, minion._base._baseNumber, (int)minion._position.X, (int)minion._position.Y);
+                    saveGame.Write("{0}\n{1}\n{2}\n{3}\n{4}\n", minion._lives, minion._minionLifeTimer, minion._base._baseNumber, (int)minion._position.X, (int)minion._position.Y);
                 }
             }
         }
 
         protected void LoadGame()
         {
-            using (StreamReader loadGame = new StreamReader("saveFile.txt"))
+            using (StreamReader loadGame = new StreamReader("saveFile/maze.txt"))
             {
-                
+                for (int y = 0; y < _mazeSize; y++)
+                {
+                    for (int x = 0; x < _mazeSize; x++)
+                    {
+                        _maze.maze[x, y] = int.Parse(loadGame.ReadLine());
+                    }
+                }
             }
+
+            LoadContent();
+
+            using (StreamReader loadGame = new StreamReader("saveFile/players.txt"))
+            {
+                while (!loadGame.EndOfStream)
+                {
+                    int lives = int.Parse(loadGame.ReadLine());
+                    int positionX = int.Parse(loadGame.ReadLine());
+                    int positionY = int.Parse(loadGame.ReadLine());
+                    Player player = new Player(_maze, _cellSize, _bases, _players, GraphicsDevice);
+                    player._position = new Vector2(positionX, positionY);
+                    player._lives = lives;
+                    _players.Add(player);
+                }
+            }
+
+            using (StreamReader loadGame = new StreamReader("saveFile/bases.txt"))
+            {
+                while (!loadGame.EndOfStream)
+                {
+                    int positionX = int.Parse(loadGame.ReadLine());
+                    int positionY = int.Parse(loadGame.ReadLine());
+                    int ownerNumber = int.Parse(loadGame.ReadLine());
+                    int baseNumber = int.Parse(loadGame.ReadLine());
+                    Base Base = new Base(new Vector2(positionX, positionY), _cellSize, GraphicsDevice, _maze);
+                    Base._baseNumber = baseNumber;
+                    foreach (Player player in _players)
+                    {
+                        if (player._playerNumber != ownerNumber)
+                        {
+                            Base._owner = null;
+                        }
+                        else
+                        {
+                            Base._owner = player;
+                        }
+                    }
+                    _bases.Add(Base);
+                }
+            }           
+                        
+            using (StreamReader loadGame = new StreamReader("saveFile/minions.txt"))
+            {
+                while (!loadGame.EndOfStream)
+                {
+                    int lives = int.Parse(loadGame.ReadLine());
+                    int minionLifeTimer = int.Parse(loadGame.ReadLine());
+                    int baseNumber = int.Parse(loadGame.ReadLine());
+                    int positionX = int.Parse(loadGame.ReadLine());
+                    int positionY = int.Parse(loadGame.ReadLine());
+                    Base minionBase = null;
+                    foreach (Base Base in _bases)
+                    {
+                        if (Base._baseNumber == baseNumber)
+                        {
+                            minionBase = Base;
+                        }
+                    }
+                    Minion minion = new Minion(_maze, _cellSize, GraphicsDevice, minionBase);
+                    minion._lives = lives;
+                    minion._position = new Vector2(positionX, positionY);
+                    minion._minionLifeTimer = minionLifeTimer;
+                    _minions.Add(minion);
+                }
+            }
+
+            //_mazeBuffer = new RenderTarget2D(GraphicsDevice, _maze.mazeSize * _maze.cellSize, _maze.mazeSize * _maze.cellSize);
+            _playersSpawned = true;
         }
 
         protected override void Draw(GameTime gameTime)
@@ -296,7 +362,7 @@ namespace King_of_the_Maze
             {
                 _mainMenu.Draw(_spriteBatch);
             }
-            else if (_currentState == GameState.StartMenu)
+            else if (_currentState == GameState.StartMenu || _currentState == GameState.GameLoading)
             {
                 _startMenu.Draw(_spriteBatch);
             }
@@ -317,7 +383,7 @@ namespace King_of_the_Maze
                     Base.Draw(_spriteBatch);
                 }
             }
-            else if (_currentState == GameState.GamePaused)
+            else if (_currentState == GameState.GamePaused || _currentState == GameState.GameSaving)
             {
                 _spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
                 _pauseMenu.Draw(_spriteBatch);

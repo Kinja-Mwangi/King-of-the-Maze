@@ -29,12 +29,11 @@ namespace King_of_the_Maze
         public int _initialHitResetInterval = 180;
         public int _lives;
 
-        public Player(Maze maze, int cellSize, Base Base, List<Base> bases, List<Player> players, GraphicsDevice graphicsDevice)
+        public Player(Maze maze, int cellSize, List<Base> bases, List<Player> players, GraphicsDevice graphicsDevice)
         {
             _lives = 4;
             _maze = maze;
             _cellSize = cellSize;
-            _base = Base;
             _bases = bases;
             _colours = Game1._colours;
             _players = players;

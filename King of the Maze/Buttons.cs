@@ -80,6 +80,9 @@ namespace King_of_the_Maze
                     Game1._gameInitialized = false;
                     currentState = ChangeGameState(GameState.MainMenu);
                     break;
+                case 9:
+                    currentState = ChangeGameState(GameState.GameLoading);
+                    break;
             }
 
             GameState ChangeGameState(GameState newState)
@@ -93,6 +96,10 @@ namespace King_of_the_Maze
             if (_buttonType == Game1._numberOfPlayers + 4)
             {
                 _buttonColour = Game1._colours[Game1._numberOfPlayers - 1];
+            }
+            else if (_buttonType == 4 && Game1._gameSaved)
+            {
+                _buttonTextColour = Color.Green;
             }
             spriteBatch.Draw(_buttonTexture, button, _buttonColour);
             spriteBatch.DrawString(_buttonTextFont, buttonText, new Vector2(button.X + ((button.Width - _buttonTextFont.MeasureString(buttonText).X) / 2), button.Y + ((button.Height - _buttonTextFont.MeasureString(buttonText).Y) / 2)), _buttonTextColour);

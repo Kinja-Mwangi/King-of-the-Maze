@@ -27,7 +27,7 @@ namespace King_of_the_Maze
         public List<Vector2> _path = new List<Vector2>();
         public List<Minion> _minions = new List<Minion>();
         private int _minionLifeTime = 5300; //gives a minion the lifespan of about 1 minute 30 seconds
-        private int _minionLifeTimer;
+        public int _minionLifeTimer;
         private int _minionAttackTimer;
         private int _minionAttackInterval = 180; //gives a minion a roughly 3 second cooldown between attacks
         private Color _minionColour;
@@ -36,28 +36,18 @@ namespace King_of_the_Maze
         public int _lives;
         private List<Player> _players;
 
-        public Minion(Maze maze, int cellSize, GraphicsDevice graphicsDevice, List<Minion> minions, Base Base)
+        public Minion(Maze maze, int cellSize, GraphicsDevice graphicsDevice, Base Base)
         {
             _lives = 2;
             _maze = maze;
             _cellSize = cellSize;
             _minionLifeTimer = 0;
-            _minions = minions;
             _base = Base;
-            _players = _base._players;
+            _players = Game1._players;
             _position = _base._position;
             _minionColour = _base._baseColour;
             _owner = _base._owner;
             _player = _players[rng.Next(0, _players.Count)];
-            //float closestPlayerDistance = 0; 
-            //foreach (Player player in _players) //instantiates a minion with the closest player being assigned the value of _player
-            //{
-            //    if (Vector2.Distance(_position, player._position) < closestPlayerDistance)
-            //    {
-            //        closestPlayerDistance = Vector2.Distance(_position, player._position);
-            //        _player = player;
-            //    }
-            //}
             _path = FindShortestPath(_position);
 
             _minionTexture = new Texture2D(graphicsDevice, 1, 1);
@@ -86,29 +76,12 @@ namespace King_of_the_Maze
                     }
                 }
                 
-                if (Vector2.Distance(_position, _player._position) > 10)
+                if (Vector2.Distance(_position, _player._position) > 10 || _player == _owner)
                 {
                     RandomMovement(_currentDirectionX, _currentDirectionY);
                 }
                 else
                 {
-                    ////write the _player._position to a txt file to check it is accurate and updating
-                    //string fileName = "Test-PlayerPositionTracking.txt";
-                    //FileStream appendText = File.Open(fileName, FileMode.Append);
-                    //using StreamWriter write = new StreamWriter(appendText);
-                    //{
-                    //    write.WriteLine(_player._position);
-                    //}
-                    //write.Close();
-
-                    //string fileName1 = "Test-PlayerPosList.txt";
-                    //FileStream appendText1 = File.Open(fileName1, FileMode.Append);
-                    //using StreamWriter write1 = new StreamWriter(appendText1);
-                    //{
-                    //    write1.WriteLine(String.Join(", ", _playerPosList));
-                    //}
-                    //write1.Close();
-
                     if (_playerPosList.Count() > 0 && _playerPosList.Last() != _player._position)
                     {
                         _path = FindShortestPath(_player._position);
@@ -319,6 +292,10 @@ namespace King_of_the_Maze
             {
                 return this;
             }
+            else if (_minionLifeTimer == _minionLifeTime / 2)
+            {
+                _lives--;
+            }
             _minionLifeTimer++;
             return null;
         }
@@ -328,6 +305,7 @@ namespace King_of_the_Maze
             // Draw the minion as a single pixel
             Rectangle minionRect = new Rectangle((int)(_position.X * _cellSize), (int)(_position.Y * _cellSize), _cellSize, _cellSize);
             spriteBatch.Draw(_minionTexture, minionRect, _minionColour * 0.5f * _lives);
+            spriteBatch.Draw(_minionTexture, new Rectangle((int)(_position.X * _cellSize) + 2, (int)(_position.Y * _cellSize) + 2, _cellSize - 4, _cellSize - 4), Color.White);
             //to do - draw the minion as a triangle making it easier to differentiate from players
         }
     }

@@ -68,7 +68,7 @@ namespace King_of_the_Maze
         {
             _newGameButton = new Buttons("NewGame", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("NewGame").X) / 2, (int)_titleFont.MeasureString(_titleText).Y + 120, _buttonsTextFont, 3);
             _buttons.Add(_newGameButton);
-            _loadGameButton = new Buttons("LoadGame", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("LoadGame").X) / 2, _newGameButton._buttonShape.Y + 150, _buttonsTextFont, 4);
+            _loadGameButton = new Buttons("LoadGame", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("LoadGame").X) / 2, _newGameButton._buttonShape.Y + 150, _buttonsTextFont, 9);
             _buttons.Add(_loadGameButton);
             _1player = new Buttons("1", _graphicsDevice, ((_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("1").X) / 2) - 100, _loadGameButton._buttonShape.Y + (int)_buttonsTextFont.MeasureString("Number of Players :").Y + 180, _buttonsTextFont, 5);
             _buttons.Add(_1player);
