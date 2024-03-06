@@ -149,6 +149,10 @@ namespace King_of_the_Maze
                     LoadGame();
                     _currentState = GameState.GamePlaying;
                 }
+                else
+                {
+                    _currentState = GameState.StartMenu;
+                }
             }
             //_gameSaved = false;
 
@@ -232,7 +236,6 @@ namespace King_of_the_Maze
                     {
                         saveGame.WriteLine(_maze.maze[x, y]);
                     }
-                    //saveGame.WriteLine("");
                 }
             }
 
@@ -281,8 +284,6 @@ namespace King_of_the_Maze
                 }
             }
 
-            LoadContent();
-
             using (StreamReader loadGame = new StreamReader("saveFile/players.txt"))
             {
                 while (!loadGame.EndOfStream)
@@ -309,13 +310,9 @@ namespace King_of_the_Maze
                     Base._baseNumber = baseNumber;
                     foreach (Player player in _players)
                     {
-                        if (player._playerNumber != ownerNumber)
+                        if (player._playerNumber == ownerNumber)
                         {
-                            Base._owner = null;
-                        }
-                        else
-                        {
-                            Base._owner = player;
+                            Base.CaptureBase(player);
                         }
                     }
                     _bases.Add(Base);
@@ -349,6 +346,7 @@ namespace King_of_the_Maze
 
             //_mazeBuffer = new RenderTarget2D(GraphicsDevice, _maze.mazeSize * _maze.cellSize, _maze.mazeSize * _maze.cellSize);
             _playersSpawned = true;
+            LoadContent();
         }
 
         protected override void Draw(GameTime gameTime)
@@ -369,18 +367,22 @@ namespace King_of_the_Maze
             else if (_currentState == GameState.GamePlaying)
             {
                 _spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
+
+                //_minion.Draw(_spriteBatch);
+
+                foreach (Base Base in _bases)
+                {
+                    Base.Draw(_spriteBatch);
+                }
+
                 foreach (Player player in _players)
                 {
                     player.Draw(_spriteBatch);
                 }
-                //_minion.Draw(_spriteBatch);
+
                 foreach (Minion minion in _minions)
                 {
                     minion.Draw(_spriteBatch);
-                }
-                foreach (Base Base in _bases)
-                {
-                    Base.Draw(_spriteBatch);
                 }
             }
             else if (_currentState == GameState.GamePaused || _currentState == GameState.GameSaving)
