@@ -19,7 +19,9 @@ namespace King_of_the_Maze
         private Maze _maze;
         private Base _base;
         private Player _player;
+        private Player _winner;
         private PauseMenu _pauseMenu;
+        private GameOver _gameOver;
         //private Minion _minion;
         private RenderTarget2D _mazeBuffer;
         private List<Minion> _minions = new List<Minion>();
@@ -57,6 +59,7 @@ namespace King_of_the_Maze
             _mainMenu = new MainMenu(GraphicsDevice);
             _startMenu = new StartMenu(GraphicsDevice);
             _pauseMenu = new PauseMenu(GraphicsDevice);
+            _gameOver = new GameOver(GraphicsDevice);
 
             for (int i = 0; i < _mazeSize; i++) //adds bases to the maze
             {
@@ -205,13 +208,13 @@ namespace King_of_the_Maze
                     _minions.Remove(removeMinion);
                 }
 
-                if (_maze.GameOver(_players, _bases) != null)
+                _winner = _maze.GameOver(_players, _bases, ref _currentState);
+
+                if (_currentState == GameState.GameOver)
                 {
-                    //add some gameover screen and logic to maybe restart the game
+                    _gameOver._gameOverColour = _winner._playerColour;
                 }
-
             }
-
 
             base.Update(gameTime);
         }
@@ -389,6 +392,11 @@ namespace King_of_the_Maze
             {
                 _spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
                 _pauseMenu.Draw(_spriteBatch);
+            }
+            else if (_currentState == GameState.GameOver)
+            {
+                _spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
+                _gameOver.Draw(_spriteBatch);
             }
             _spriteBatch.End();
             base.Draw(gameTime);

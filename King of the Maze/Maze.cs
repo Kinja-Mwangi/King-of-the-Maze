@@ -126,10 +126,11 @@ namespace King_of_the_Maze
             }
         }
 
-        public Player GameOver(List<Player> players, List<Base> bases)
+        public Player GameOver(List<Player> players, List<Base> bases, ref GameState currentState)
         {
-            if (players.Count == 1)
+            if (players.Count == 1 && Game1._numberOfPlayers > 1)
             {
+                currentState = GameState.GameOver;
                 return players[0];
             }
             foreach (Player player in players) 
@@ -144,6 +145,7 @@ namespace King_of_the_Maze
                 }
                 if (basesCaptured == bases.Count)
                 {
+                    currentState = GameState.GameOver;
                     return player;
                 }
             }
