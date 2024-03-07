@@ -104,6 +104,7 @@ namespace King_of_the_Maze
             _startMenu._titleFont = Content.Load<SpriteFont>("Crang85");
             _startMenu._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
             _pauseMenu._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
+            _gameOver._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
             GraphicsDevice.SetRenderTarget(_mazeBuffer);
             GraphicsDevice.Clear(Color.Transparent); // Clear the buffer
             _spriteBatch.Begin();
@@ -213,6 +214,7 @@ namespace King_of_the_Maze
                 if (_currentState == GameState.GameOver)
                 {
                     _gameOver._gameOverColour = _winner._playerColour;
+                    _gameOver.HandleButtons(ref _currentState);
                 }
             }
 
@@ -261,7 +263,7 @@ namespace King_of_the_Maze
             {
                 foreach (Player player in _players)
                 {
-                    saveGame.Write("{0}\n{1}\n{2}\n", player._lives, (int)player._position.X, (int)player._position.Y);
+                    saveGame.Write("{0}\n{1}\n{2}\n{3}\n", player._lives, player._playerNumber, (int)player._position.X, (int)player._position.Y);
                 }
             }
 
@@ -292,11 +294,13 @@ namespace King_of_the_Maze
                 while (!loadGame.EndOfStream)
                 {
                     int lives = int.Parse(loadGame.ReadLine());
+                    int playerNumber = int.Parse(loadGame.ReadLine());
                     int positionX = int.Parse(loadGame.ReadLine());
                     int positionY = int.Parse(loadGame.ReadLine());
                     Player player = new Player(_maze, _cellSize, _bases, _players, GraphicsDevice);
                     player._position = new Vector2(positionX, positionY);
                     player._lives = lives;
+                    player._playerNumber = playerNumber;
                     _players.Add(player);
                 }
             }

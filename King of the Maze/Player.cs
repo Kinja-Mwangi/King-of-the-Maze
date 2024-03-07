@@ -89,6 +89,10 @@ namespace King_of_the_Maze
                     {
                         PlayerMoveMent(1, 0); // Right
                     }
+                    if (keyboardState.IsKeyDown(Keys.J))
+                    {
+                        _position = _bases[rng.Next(0, _bases.Count)]._position;
+                    }
                     break;
                 case 2:
                     // Move the player based on the arrow keys

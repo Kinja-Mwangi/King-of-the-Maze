@@ -133,20 +133,23 @@ namespace King_of_the_Maze
                 currentState = GameState.GameOver;
                 return players[0];
             }
-            foreach (Player player in players) 
+            else
             {
-                int basesCaptured = 0;
-                foreach (Base Base in bases)
+                foreach (Player player in players)
                 {
-                    if (Base._owner == player)
+                    int basesCaptured = 0;
+                    foreach (Base Base in bases)
                     {
-                        basesCaptured++;
+                        if (Base._owner == player)
+                        {
+                            basesCaptured++;
+                        }
                     }
-                }
-                if (basesCaptured == bases.Count)
-                {
-                    currentState = GameState.GameOver;
-                    return player;
+                    if (basesCaptured == bases.Count)
+                    {
+                        currentState = GameState.GameOver;
+                        return player;
+                    }
                 }
             }
             return null;
