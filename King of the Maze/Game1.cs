@@ -19,7 +19,7 @@ namespace King_of_the_Maze
         private Maze _maze;
         private Base _base;
         private Player _player;
-        private Player _winner;
+        public static Player _winner;
         private PauseMenu _pauseMenu;
         private GameOver _gameOver;
         //private Minion _minion;
@@ -105,6 +105,7 @@ namespace King_of_the_Maze
             _startMenu._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
             _pauseMenu._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
             _gameOver._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
+            _gameOver._gameOverFont = Content.Load<SpriteFont>("Crang65");
             GraphicsDevice.SetRenderTarget(_mazeBuffer);
             GraphicsDevice.Clear(Color.Transparent); // Clear the buffer
             _spriteBatch.Begin();
@@ -210,12 +211,11 @@ namespace King_of_the_Maze
                 }
 
                 _winner = _maze.GameOver(_players, _bases, ref _currentState);
-
-                if (_currentState == GameState.GameOver)
-                {
-                    _gameOver._gameOverColour = _winner._playerColour;
-                    _gameOver.HandleButtons(ref _currentState);
-                }
+            }
+            else if (_currentState == GameState.GameOver)
+            {
+                _gameOver._gameOverColour = _winner._playerColour;
+                _gameOver.HandleButtons(ref _currentState);
             }
 
             base.Update(gameTime);
