@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System;
 //using SharpDX.Direct2D1;
 using System.Collections.Generic;
@@ -44,6 +45,10 @@ namespace King_of_the_Maze
         public static bool _gameSaved = false;
         private int _minionBoostTimer;
         private int _minionBoostInterval = 5300;
+        private Song _menuMusic;
+        private Song _playingMusic;
+        private Song _victoryMusic;
+        private Song _gameOverMusic;
 
         public Game1()
         {
@@ -64,6 +69,7 @@ namespace King_of_the_Maze
             _startMenu = new StartMenu(GraphicsDevice);
             _pauseMenu = new PauseMenu(GraphicsDevice);
             _gameOver = new GameOver(GraphicsDevice);
+            MediaPlayer.IsRepeating = true;
 
             for (int i = 0; i < _mazeSize; i++) //adds bases to the maze
             {
@@ -110,6 +116,10 @@ namespace King_of_the_Maze
             _pauseMenu._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
             _gameOver._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
             _gameOver._gameOverFont = Content.Load<SpriteFont>("Crang65");
+            _menuMusic = Content.Load<Song>("Menu Music");
+            _playingMusic = Content.Load<Song>("Playing Music");
+            _victoryMusic = Content.Load<Song>("Victory Music");
+            _gameOverMusic = Content.Load<Song>("Game Over Music");
             GraphicsDevice.SetRenderTarget(_mazeBuffer);
             GraphicsDevice.Clear(Color.Transparent); // Clear the buffer
             _spriteBatch.Begin();
@@ -125,6 +135,42 @@ namespace King_of_the_Maze
                 Exit();
 
             // TODO: Add your update logic here
+            if (_currentState == GameState.MainMenu)
+            {
+                if (MediaPlayer.State != MediaState.Playing)
+                {
+                    MediaPlayer.Play(_menuMusic);
+                }
+            }
+            else if (_currentState == GameState.GamePlaying)
+            {
+                MediaPlayer.Volume = 1f;
+                if (MediaPlayer.State != MediaState.Playing)
+                {
+                    MediaPlayer.Play(_playingMusic);
+                }
+            }
+            else if (_currentState == GameState.GamePaused)
+            {
+                MediaPlayer.Volume = 0.4f;
+            }
+            else if (_currentState == GameState.GameOver)
+            {
+                if (_winner == null)
+                {
+                    if (MediaPlayer.State != MediaState.Playing)
+                    {
+                        MediaPlayer.Play(_gameOverMusic);
+                    }
+                }
+                else
+                {
+                    if (MediaPlayer.State != MediaState.Playing)
+                    {
+                        MediaPlayer.Play(_victoryMusic);
+                    }
+                }
+            }
             if (_currentState == GameState.MainMenu)
             {
                 if (!_gameInitialized)
@@ -449,6 +495,10 @@ namespace King_of_the_Maze
             {
                 _spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
                 _pauseMenu.Draw(_spriteBatch);
+            }
+            else if (_currentState == GameState.GameRestarting)
+            {
+                _spriteBatch.Draw(_mazeBuffer, Vector2.Zero, Color.White);
             }
             else if (_currentState == GameState.GameOver)
             {

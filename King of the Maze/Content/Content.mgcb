@@ -41,3 +41,27 @@
 /processorParam:TextureFormat=Compressed
 /build:Crang85.spritefont
 
+#begin Game Over Music.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Game Over Music.mp3
+
+#begin Menu Music.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Menu Music.mp3
+
+#begin Playing Music.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Playing Music.mp3
+
+#begin Victory Music.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Victory Music.mp3
+

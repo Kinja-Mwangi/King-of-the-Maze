@@ -3,6 +3,7 @@ using Microsoft.VisualBasic.ApplicationServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,6 +60,10 @@ namespace King_of_the_Maze
                     currentState = GameState.GameExit;
                     break;
                 case 3:
+                    if (currentState != GameState.GamePaused)
+                    {
+                        MediaPlayer.Stop();
+                    }
                     currentState = GameState.GamePlaying;
                     break;
                 case 4:
@@ -77,13 +82,19 @@ namespace King_of_the_Maze
                     _buttonColour = Color.Blue;
                     break;
                 case 8:
+                    if (currentState != GameState.GameInstructions)
+                    {
+                        MediaPlayer.Stop();
+                    }
                     Game1._gameInitialized = false;
                     currentState = GameState.MainMenu;
                     break;
                 case 9:
+                    MediaPlayer.Stop();
                     currentState = GameState.GameLoading;
                     break;
                 case 10:
+                    MediaPlayer.Stop();
                     currentState = GameState.GameRestarting;
                     break;
             }

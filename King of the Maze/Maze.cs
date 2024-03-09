@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -130,11 +131,13 @@ namespace King_of_the_Maze
         {
             if (players.Count == 1 && Game1._numberOfPlayers > 1)
             {
+                MediaPlayer.Stop();
                 currentState = GameState.GameOver;
                 return players[0];
             }
             else if (players.Count == 0)
             {
+                MediaPlayer.Stop();
                 currentState = GameState.GameOver;
             }
             else
@@ -151,6 +154,7 @@ namespace King_of_the_Maze
                     }
                     if (basesCaptured == bases.Count)
                     {
+                        MediaPlayer.Stop();
                         currentState = GameState.GameOver;
                         return player;
                     }
