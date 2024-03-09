@@ -133,6 +133,10 @@ namespace King_of_the_Maze
                 currentState = GameState.GameOver;
                 return players[0];
             }
+            else if (players.Count == 0)
+            {
+                currentState = GameState.GameOver;
+            }
             else
             {
                 foreach (Player player in players)

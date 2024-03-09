@@ -4,9 +4,11 @@ using Microsoft.Xna.Framework.Input;
 using System;
 //using SharpDX.Direct2D1;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using System.Threading;
 
 namespace King_of_the_Maze
 {
@@ -40,6 +42,8 @@ namespace King_of_the_Maze
         private bool _playersSpawned;
         public static bool _gameInitialized;
         public static bool _gameSaved = false;
+        private int _minionBoostTimer;
+        private int _minionBoostInterval = 5300;
 
         public Game1()
         {
@@ -149,6 +153,7 @@ namespace King_of_the_Maze
             }
             else if (_currentState == GameState.GameLoading)
             {
+                ClearGame();
                 if (Directory.Exists("saveFile"))
                 {
                     LoadGame();
@@ -160,7 +165,11 @@ namespace King_of_the_Maze
                 }
             }
             //_gameSaved = false;
-
+            else if (_currentState == GameState.GameRestarting)
+            {
+                ResetGame();
+                _currentState = GameState.GamePlaying;
+            }
             else if (_currentState == GameState.GamePlaying)
             {
                 _gameSaved = false;
@@ -172,10 +181,6 @@ namespace King_of_the_Maze
                         _players.Add(_player);
                     }
                     _playersSpawned = true;
-                }
-                if (Keyboard.GetState().IsKeyDown(Keys.P))
-                {
-                    _currentState = GameState.GamePaused;
                 }
                 List<Player> removePlayers = new List<Player>();
                 foreach (Player player in _players)
@@ -210,11 +215,45 @@ namespace King_of_the_Maze
                     _minions.Remove(removeMinion);
                 }
 
+                if (_minionBoostTimer == _minionBoostInterval)
+                {
+                    foreach (Minion minion in _minions)
+                    {
+                        if (minion._movementInterval > 0)
+                        {
+                            minion._movementInterval--;
+                        }
+                        if (minion._trackingRange < 87)
+                        {
+                            minion._trackingRange += 4;
+                        }
+                    }
+                    _maxMinionCount += 3;
+                    if (_spawnInterval > 0)
+                    {
+                        _spawnInterval -= 20;
+                    }
+                    _minionBoostTimer = 0;
+                }
+                _minionBoostTimer++;
+
+                if (Keyboard.GetState().IsKeyDown(Keys.P))
+                {
+                    _currentState = GameState.GamePaused;
+                }
+
                 _winner = _maze.GameOver(_players, _bases, ref _currentState);
             }
             else if (_currentState == GameState.GameOver)
             {
-                _gameOver._gameOverColour = _winner._playerColour;
+                if (_winner != null)
+                {
+                    _gameOver._gameOverColour = _winner._playerColour;
+                }
+                else
+                {
+                    _gameOver._gameOverColour = Color.Red;
+                }
                 _gameOver.HandleButtons(ref _currentState);
             }
 
@@ -223,11 +262,16 @@ namespace King_of_the_Maze
 
         protected void ResetGame()
         {
+            ClearGame();
+            Initialize();
+            LoadContent();
+        }
+
+        protected void ClearGame()
+        {
             _players.Clear();
             _minions.Clear();
             _bases.Clear();
-            Initialize();
-            LoadContent();
         }
 
         protected void SaveGame()
@@ -250,11 +294,11 @@ namespace King_of_the_Maze
                 {
                     if (Base._owner != null)
                     {
-                        saveGame.Write("{0}\n{1}\n{2}\n{3}\n", (int)Base._position.X, (int)Base._position.Y, Base._owner._playerNumber, Base._baseNumber);
+                        saveGame.Write("{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n", (int)Base._position.X, (int)Base._position.Y, Base._owner._playerNumber, Base._baseNumber, _spawnInterval, _maxMinionCount);
                     }
                     else
                     {
-                        saveGame.Write("{0}\n{1}\n{2}\n{3}\n", (int)Base._position.X, (int)Base._position.Y, 0, Base._baseNumber);
+                        saveGame.Write("{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n", (int)Base._position.X, (int)Base._position.Y, 0, Base._baseNumber, _spawnInterval, _maxMinionCount);
                     }
                 }
             }   
@@ -271,7 +315,7 @@ namespace King_of_the_Maze
             {
                 foreach (Minion minion in _minions)
                 {
-                    saveGame.Write("{0}\n{1}\n{2}\n{3}\n{4}\n", minion._lives, minion._minionLifeTimer, minion._base._baseNumber, (int)minion._position.X, (int)minion._position.Y);
+                    saveGame.Write("{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n{6}\n", minion._lives, minion._minionLifeTimer, minion._base._baseNumber, (int)minion._position.X, (int)minion._position.Y, minion._movementInterval, minion._trackingRange);
                 }
             }
         }
@@ -313,6 +357,8 @@ namespace King_of_the_Maze
                     int positionY = int.Parse(loadGame.ReadLine());
                     int ownerNumber = int.Parse(loadGame.ReadLine());
                     int baseNumber = int.Parse(loadGame.ReadLine());
+                    int spawnInterval = int.Parse(loadGame.ReadLine());
+                    int maxMinionCount = int.Parse(loadGame.ReadLine());
                     Base Base = new Base(new Vector2(positionX, positionY), _cellSize, GraphicsDevice, _maze);
                     Base._baseNumber = baseNumber;
                     foreach (Player player in _players)
@@ -320,8 +366,11 @@ namespace King_of_the_Maze
                         if (player._playerNumber == ownerNumber)
                         {
                             Base.CaptureBase(player);
+                            break;
                         }
                     }
+                    _spawnInterval = spawnInterval;
+                    _maxMinionCount = maxMinionCount;
                     _bases.Add(Base);
                 }
             }           
@@ -334,7 +383,9 @@ namespace King_of_the_Maze
                     int minionLifeTimer = int.Parse(loadGame.ReadLine());
                     int baseNumber = int.Parse(loadGame.ReadLine());
                     int positionX = int.Parse(loadGame.ReadLine());
-                    int positionY = int.Parse(loadGame.ReadLine());
+                    int positionY = int.Parse(loadGame.ReadLine());   
+                    int movementInterval = int.Parse(loadGame.ReadLine());
+                    int trackingRange = int.Parse(loadGame.ReadLine());
                     Base minionBase = null;
                     foreach (Base Base in _bases)
                     {
@@ -347,6 +398,8 @@ namespace King_of_the_Maze
                     minion._lives = lives;
                     minion._position = new Vector2(positionX, positionY);
                     minion._minionLifeTimer = minionLifeTimer;
+                    minion._trackingRange = trackingRange;
+                    minion._movementInterval = movementInterval;
                     _minions.Add(minion);
                 }
             }

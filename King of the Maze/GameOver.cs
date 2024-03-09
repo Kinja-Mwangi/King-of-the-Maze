@@ -11,6 +11,7 @@ namespace King_of_the_Maze
 {
     internal class GameOver
     {
+        public Random _rng = new Random();
         public List<Buttons> _buttons = new List<Buttons>();
         public SpriteFont _buttonsTextFont;
         public SpriteFont _gameOverFont;
@@ -61,7 +62,7 @@ namespace King_of_the_Maze
         {
             //position the buttons to the center of the screen
             //preferably get the pause menu to be drawn over the game
-            _restartButton = new Buttons("Restart", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("Restart").X) / 2, ((_graphicsDevice.Viewport.Height - (int)_buttonsTextFont.MeasureString("Restart").Y) / 2) - 150, _buttonsTextFont, 4);
+            _restartButton = new Buttons("Restart", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("Restart").X) / 2, ((_graphicsDevice.Viewport.Height - (int)_buttonsTextFont.MeasureString("Restart").Y) / 2), _buttonsTextFont, 10);
             _buttons.Add(_restartButton);
             _quitButton = new Buttons("Quit", _graphicsDevice, (_graphicsDevice.Viewport.Width - (int)_buttonsTextFont.MeasureString("Quit").X) / 2, _restartButton._buttonShape.Bottom + 90, _buttonsTextFont, 8);
             _buttons.Add(_quitButton);
@@ -72,7 +73,7 @@ namespace King_of_the_Maze
                 {
                     button1 = button;
                 }
-                _gameOverRectangle = new Rectangle(_restartButton._buttonShape.Left - 150, _restartButton._buttonShape.Top - 250, button1._buttonShape.Width + 300, _quitButton._buttonShape.Bottom + 100); //for some reason the bottom of the quit button is not where it should be
+                _gameOverRectangle = new Rectangle(_restartButton._buttonShape.Left - 150, _restartButton._buttonShape.Top - 250, button1._buttonShape.Width + 300, _quitButton._buttonShape.Bottom); //for some reason the bottom of the quit button is not where it should be
             }
             _buttonsInitialized = true;
         }
@@ -81,6 +82,7 @@ namespace King_of_the_Maze
         {
             if (_buttonsInitialized)
             {
+                //_gameOverTextColour = ColourCycle();
                 spriteBatch.Draw(_gameOverTexture, _gameOverRectangle, _gameOverColour);
                 foreach (Buttons button in _buttons)
                 {
@@ -88,11 +90,11 @@ namespace King_of_the_Maze
                 }
                 if (Game1._winner == null)
                 {
-                    spriteBatch.DrawString(_gameOverFont, "Game Over!", new Vector2((_gameOverRectangle.X - (int)_buttonsTextFont.MeasureString("Game Over!").X) / 2, _gameOverRectangle.Top - (int)_buttonsTextFont.MeasureString("Game Over!").Y), Color.Black);
+                    spriteBatch.DrawString(_gameOverFont, "Game Over!", new Vector2(((_gameOverRectangle.Width - (int)_buttonsTextFont.MeasureString("Game Over!").X) / 2) + 50, _gameOverRectangle.Top + 50), Color.Black);
                 }
                 else
                 {
-                    spriteBatch.DrawString(_gameOverFont, "Player " + Game1._winner._playerNumber + "\n     Wins!", new Vector2(((_gameOverRectangle.Width - (int)_buttonsTextFont.MeasureString("Player" + Game1._winner._playerNumber + "\n     Wins!").X) / 2) + 50, _gameOverRectangle.Top + 25), Color.Black);
+                    spriteBatch.DrawString(_gameOverFont, "Player " + Game1._winner._playerNumber + "\n     Wins!", new Vector2(((_gameOverRectangle.Width - (int)_buttonsTextFont.MeasureString("Player" + Game1._winner._playerNumber + "\n     Wins!").X) / 2) + 50, _gameOverRectangle.Top + 25), new Color(255 - Game1._winner._playerColour.R, 255 - Game1._winner._playerColour.G, 255 - Game1._winner._playerColour.B));
                 }
             }
         }

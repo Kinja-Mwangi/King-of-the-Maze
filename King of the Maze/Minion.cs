@@ -19,7 +19,7 @@ namespace King_of_the_Maze
         private int _cellSize;
         public Vector2 _position;
         private int _movementTimer;
-        private int _movementInterval = 9; // Adjust this value for slower or faster movement
+        public int _movementInterval = 9; // Adjust this value for slower or faster movement
         private int _currentDirectionX;
         private int _currentDirectionY;
         private Texture2D _minionTexture;
@@ -35,6 +35,7 @@ namespace King_of_the_Maze
         public Base _base;
         public int _lives;
         private List<Player> _players;
+        public int _trackingRange = 10;
 
         public Minion(Maze maze, int cellSize, GraphicsDevice graphicsDevice, Base Base)
         {
@@ -76,7 +77,7 @@ namespace King_of_the_Maze
                     }
                 }
                 
-                if (Vector2.Distance(_position, _player._position) > 10 || _player == _owner)
+                if (Vector2.Distance(_position, _player._position) > _trackingRange || _player == _owner)
                 {
                     RandomMovement(_currentDirectionX, _currentDirectionY);
                 }

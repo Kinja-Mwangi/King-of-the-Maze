@@ -50,19 +50,19 @@ namespace King_of_the_Maze
             switch (_buttonType)
             {
                 case 0:
-                    currentState = ChangeGameState(GameState.StartMenu);
+                    currentState = GameState.StartMenu;
                     break;
                 case 1:
-                    currentState = ChangeGameState(GameState.GameInstructions);
+                    currentState = GameState.GameInstructions;
                     break;
                 case 2:
-                    currentState = ChangeGameState(GameState.GameExit);
+                    currentState = GameState.GameExit;
                     break;
                 case 3:
-                    currentState = ChangeGameState(GameState.GamePlaying);
+                    currentState = GameState.GamePlaying;
                     break;
                 case 4:
-                    currentState = ChangeGameState(GameState.GameSaving);
+                    currentState = GameState.GameSaving;
                     break;
                 case 5:
                     Game1._numberOfPlayers = 1;
@@ -78,16 +78,14 @@ namespace King_of_the_Maze
                     break;
                 case 8:
                     Game1._gameInitialized = false;
-                    currentState = ChangeGameState(GameState.MainMenu);
+                    currentState = GameState.MainMenu;
                     break;
                 case 9:
-                    currentState = ChangeGameState(GameState.GameLoading);
+                    currentState = GameState.GameLoading;
                     break;
-            }
-
-            GameState ChangeGameState(GameState newState)
-            {
-                return newState;
+                case 10:
+                    currentState = GameState.GameRestarting;
+                    break;
             }
         }
 
