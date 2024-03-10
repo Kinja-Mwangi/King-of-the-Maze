@@ -137,6 +137,7 @@ namespace King_of_the_Maze
             // TODO: Add your update logic here
             if (_currentState == GameState.MainMenu)
             {
+                MediaPlayer.Volume = 0.8f;
                 if (MediaPlayer.State != MediaState.Playing)
                 {
                     MediaPlayer.Play(_menuMusic);
@@ -394,6 +395,8 @@ namespace King_of_the_Maze
                     _players.Add(player);
                 }
             }
+
+            _numberOfPlayers = _players.Count;
 
             using (StreamReader loadGame = new StreamReader("saveFile/bases.txt"))
             {
