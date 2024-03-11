@@ -148,7 +148,7 @@ namespace King_of_the_Maze
             }
             else if (_currentState == GameState.GameInstructions)
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+                if (Keyboard.GetState().IsKeyDown(Keys.Back))
                 {
                     _currentState = GameState.MainMenu;
                 }
