@@ -128,50 +128,12 @@ namespace King_of_the_Maze
             GraphicsDevice.SetRenderTarget(null);
         }
 
-
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape) || _currentState == GameState.GameExit)
                 Exit();
 
             // TODO: Add your update logic here
-            if (_currentState == GameState.MainMenu)
-            {
-                MediaPlayer.Volume = 0.8f;
-                if (MediaPlayer.State != MediaState.Playing)
-                {
-                    MediaPlayer.Play(_menuMusic);
-                }
-            }
-            else if (_currentState == GameState.GamePlaying)
-            {
-                MediaPlayer.Volume = 1f;
-                if (MediaPlayer.State != MediaState.Playing)
-                {
-                    MediaPlayer.Play(_playingMusic);
-                }
-            }
-            else if (_currentState == GameState.GamePaused)
-            {
-                MediaPlayer.Volume = 0.4f;
-            }
-            else if (_currentState == GameState.GameOver)
-            {
-                if (_winner == null)
-                {
-                    if (MediaPlayer.State != MediaState.Playing)
-                    {
-                        MediaPlayer.Play(_gameOverMusic);
-                    }
-                }
-                else
-                {
-                    if (MediaPlayer.State != MediaState.Playing)
-                    {
-                        MediaPlayer.Play(_victoryMusic);
-                    }
-                }
-            }
             if (_currentState == GameState.MainMenu)
             {
                 if (!_gameInitialized)
@@ -303,7 +265,7 @@ namespace King_of_the_Maze
                 }
                 _gameOver.HandleButtons(ref _currentState);
             }
-
+            HandleMusic();
             base.Update(gameTime);
         }
 
@@ -456,6 +418,47 @@ namespace King_of_the_Maze
             //_mazeBuffer = new RenderTarget2D(GraphicsDevice, _maze.mazeSize * _maze.cellSize, _maze.mazeSize * _maze.cellSize);
             _playersSpawned = true;
             LoadContent();
+        }
+
+        protected void HandleMusic()
+        {
+            if (_currentState == GameState.MainMenu)
+            {
+                MediaPlayer.Volume = 0.8f;
+                if (MediaPlayer.State != MediaState.Playing)
+                {
+                    MediaPlayer.Play(_menuMusic);
+                }
+            }
+            else if (_currentState == GameState.GamePlaying)
+            {
+                MediaPlayer.Volume = 1f;
+                if (MediaPlayer.State != MediaState.Playing)
+                {
+                    MediaPlayer.Play(_playingMusic);
+                }
+            }
+            else if (_currentState == GameState.GamePaused)
+            {
+                MediaPlayer.Volume = 0.4f;
+            }
+            else if (_currentState == GameState.GameOver)
+            {
+                if (_winner == null)
+                {
+                    if (MediaPlayer.State != MediaState.Playing)
+                    {
+                        MediaPlayer.Play(_gameOverMusic);
+                    }
+                }
+                else
+                {
+                    if (MediaPlayer.State != MediaState.Playing)
+                    {
+                        MediaPlayer.Play(_victoryMusic);
+                    }
+                }
+            }
         }
 
         protected override void Draw(GameTime gameTime)
