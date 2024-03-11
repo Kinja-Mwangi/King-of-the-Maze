@@ -25,6 +25,7 @@ namespace King_of_the_Maze
         public static Player _winner;
         private PauseMenu _pauseMenu;
         private GameOver _gameOver;
+        private Instructions _instructions;
         //private Minion _minion;
         private RenderTarget2D _mazeBuffer;
         private List<Minion> _minions = new List<Minion>();
@@ -68,6 +69,7 @@ namespace King_of_the_Maze
             _mainMenu = new MainMenu(GraphicsDevice);
             _startMenu = new StartMenu(GraphicsDevice);
             _pauseMenu = new PauseMenu(GraphicsDevice);
+            _instructions = new Instructions(GraphicsDevice);
             _gameOver = new GameOver(GraphicsDevice);
             MediaPlayer.IsRepeating = true;
 
@@ -116,6 +118,8 @@ namespace King_of_the_Maze
             _pauseMenu._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
             _gameOver._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
             _gameOver._gameOverFont = Content.Load<SpriteFont>("Crang65");
+            _instructions._titleFont = Content.Load<SpriteFont>("Crang65");
+            _instructions._instructionsFont = Content.Load<SpriteFont>("DigitalDisco9");
             _menuMusic = Content.Load<Song>("Menu Music");
             _playingMusic = Content.Load<Song>("Playing Music");
             _victoryMusic = Content.Load<Song>("Victory Music");
@@ -144,11 +148,18 @@ namespace King_of_the_Maze
             }
             else if (_currentState == GameState.GameInstructions)
             {
-
+                if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+                {
+                    _currentState = GameState.MainMenu;
+                }
             }
             else if (_currentState == GameState.StartMenu)
             {
                 _startMenu.HandleButtons(ref _currentState);
+                if (Keyboard.GetState().IsKeyDown(Keys.Back))
+                {
+                    _currentState = GameState.MainMenu;
+                }
             }
             else if (_currentState == GameState.GamePaused)
             {
@@ -475,6 +486,10 @@ namespace King_of_the_Maze
             else if (_currentState == GameState.StartMenu || _currentState == GameState.GameLoading)
             {
                 _startMenu.Draw(_spriteBatch);
+            }
+            else if (_currentState == GameState.GameInstructions)
+            {
+                _instructions.Draw(_spriteBatch);
             }
             else if (_currentState == GameState.GamePlaying)
             {

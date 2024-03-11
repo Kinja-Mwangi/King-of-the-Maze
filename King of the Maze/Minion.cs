@@ -268,6 +268,7 @@ namespace King_of_the_Maze
                 if (_position == player._position && _owner != player && (_minionAttackTimer == _minionAttackInterval || player._initialHit))
                 {
                     player._lives--;
+                    _lives--;
                     player._initialHit = false;
                     _minionAttackTimer = 0;
                 }

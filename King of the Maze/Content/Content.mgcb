@@ -13,13 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Crang25.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Crang25.spritefont
-
 #begin Crang45.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -40,6 +33,13 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Crang85.spritefont
+
+#begin DigitalDisco9.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:DigitalDisco9.spritefont
 
 #begin Game Over Music.mp3
 /importer:Mp3Importer
