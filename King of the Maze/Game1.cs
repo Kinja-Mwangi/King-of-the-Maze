@@ -118,7 +118,7 @@ namespace King_of_the_Maze
             _pauseMenu._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
             _gameOver._buttonsTextFont = Content.Load<SpriteFont>("Crang45");
             _gameOver._gameOverFont = Content.Load<SpriteFont>("Crang65");
-            _instructions._titleFont = Content.Load<SpriteFont>("Crang65");
+            _instructions._titleFont = Content.Load<SpriteFont>("Crang85");
             _instructions._instructionsFont = Content.Load<SpriteFont>("DigitalDisco9");
             _menuMusic = Content.Load<Song>("Menu Music");
             _playingMusic = Content.Load<Song>("Playing Music");
