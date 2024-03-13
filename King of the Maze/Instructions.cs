@@ -17,7 +17,7 @@ namespace King_of_the_Maze
         public SpriteFont _instructionsFont;
         private GraphicsDevice _graphicsDevice;
         string _titleText;
-        string _instructionsText;
+        string _instructionsText = "";
 
         public Instructions(GraphicsDevice graphicsDevice)
         {
@@ -25,9 +25,12 @@ namespace King_of_the_Maze
             _instructionsTexture = new Texture2D(_graphicsDevice, 1, 1);
             _instructionsTexture.SetData(new[] { Color.White });
             _titleText = "Instructions";
-            using (StreamReader loadInstructions = new StreamReader("instructions.txt"))
+            if (File.Exists("instructions.txt"))
             {
-                _instructionsText = loadInstructions.ReadToEnd();
+                using (StreamReader loadInstructions = new StreamReader("instructions.txt"))
+                {
+                    _instructionsText = loadInstructions.ReadToEnd();
+                }
             }
         }
 
