@@ -83,7 +83,7 @@ namespace King_of_the_Maze
                 }
                 else
                 {
-                    if (_playerPosList.Count() > 0 && _playerPosList.Last() != _player._position)
+                    if ((_playerPosList.Count() > 0 && _playerPosList.Last() != _player._position) || _playerPosList.Count == 0)
                     {
                         _path = FindShortestPath(_player._position);
                     }

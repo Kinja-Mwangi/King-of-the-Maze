@@ -32,9 +32,9 @@ namespace King_of_the_Maze
         public static List<Base> _bases = new List<Base>();
         private int _mazeSize = 91;
         private int _cellSize = 10;
-        public int _maxMinionCount = 10;
+        public int _maxMinionCount = 91;
         public int _spawnTimer;
-        public int _spawnInterval = 300;
+        public int _spawnInterval = 100;
         public static int _numberOfPlayers = 1;
         public static List<Player> _players = new List<Player>();
         public Random rng = new Random();
@@ -44,8 +44,6 @@ namespace King_of_the_Maze
         private bool _playersSpawned;
         public static bool _gameInitialized;
         public static bool _gameSaved = false;
-        private int _minionBoostTimer;
-        private int _minionBoostInterval = 5300;
         private Song _menuMusic;
         private Song _playingMusic;
         private Song _victoryMusic;
@@ -235,34 +233,12 @@ namespace King_of_the_Maze
                     _minions.Remove(removeMinion);
                 }
 
-                if (_minionBoostTimer == _minionBoostInterval)
-                {
-                    foreach (Minion minion in _minions)
-                    {
-                        if (minion._movementInterval > 0)
-                        {
-                            minion._movementInterval--;
-                        }
-                        if (minion._trackingRange < 87)
-                        {
-                            minion._trackingRange += 4;
-                        }
-                    }
-                    _maxMinionCount += 3;
-                    if (_spawnInterval > 0)
-                    {
-                        _spawnInterval -= 20;
-                    }
-                    _minionBoostTimer = 0;
-                }
-                _minionBoostTimer++;
-
                 if (Keyboard.GetState().IsKeyDown(Keys.P))
                 {
                     _currentState = GameState.GamePaused;
                 }
 
-                _winner = _maze.GameOver(_players, _bases, ref _currentState);
+                _winner = GameOver();
             }
             else if (_currentState == GameState.GameOver)
             {
@@ -314,11 +290,11 @@ namespace King_of_the_Maze
                 {
                     if (Base._owner != null)
                     {
-                        saveGame.Write("{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n", (int)Base._position.X, (int)Base._position.Y, Base._owner._playerNumber, Base._baseNumber, _spawnInterval, _maxMinionCount);
+                        saveGame.Write("{0}\n{1}\n{2}\n{3}\n", (int)Base._position.X, (int)Base._position.Y, Base._owner._playerNumber, Base._baseNumber);
                     }
                     else
                     {
-                        saveGame.Write("{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n", (int)Base._position.X, (int)Base._position.Y, 0, Base._baseNumber, _spawnInterval, _maxMinionCount);
+                        saveGame.Write("{0}\n{1}\n{2}\n{3}\n", (int)Base._position.X, (int)Base._position.Y, 0, Base._baseNumber);
                     }
                 }
             }   
@@ -335,7 +311,7 @@ namespace King_of_the_Maze
             {
                 foreach (Minion minion in _minions)
                 {
-                    saveGame.Write("{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n{6}\n", minion._lives, minion._minionLifeTimer, minion._base._baseNumber, (int)minion._position.X, (int)minion._position.Y, minion._movementInterval, minion._trackingRange);
+                    saveGame.Write("{0}\n{1}\n{2}\n{3}\n{4}\n", minion._lives, minion._minionLifeTimer, minion._base._baseNumber, (int)minion._position.X, (int)minion._position.Y);
                 }
             }
         }
@@ -379,8 +355,6 @@ namespace King_of_the_Maze
                     int positionY = int.Parse(loadGame.ReadLine());
                     int ownerNumber = int.Parse(loadGame.ReadLine());
                     int baseNumber = int.Parse(loadGame.ReadLine());
-                    int spawnInterval = int.Parse(loadGame.ReadLine());
-                    int maxMinionCount = int.Parse(loadGame.ReadLine());
                     Base Base = new Base(new Vector2(positionX, positionY), _cellSize, GraphicsDevice, _maze);
                     Base._baseNumber = baseNumber;
                     foreach (Player player in _players)
@@ -391,8 +365,6 @@ namespace King_of_the_Maze
                             break;
                         }
                     }
-                    _spawnInterval = spawnInterval;
-                    _maxMinionCount = maxMinionCount;
                     _bases.Add(Base);
                 }
             }           
@@ -406,8 +378,6 @@ namespace King_of_the_Maze
                     int baseNumber = int.Parse(loadGame.ReadLine());
                     int positionX = int.Parse(loadGame.ReadLine());
                     int positionY = int.Parse(loadGame.ReadLine());   
-                    int movementInterval = int.Parse(loadGame.ReadLine());
-                    int trackingRange = int.Parse(loadGame.ReadLine());
                     Base minionBase = null;
                     foreach (Base Base in _bases)
                     {
@@ -420,8 +390,6 @@ namespace King_of_the_Maze
                     minion._lives = lives;
                     minion._position = new Vector2(positionX, positionY);
                     minion._minionLifeTimer = minionLifeTimer;
-                    minion._trackingRange = trackingRange;
-                    minion._movementInterval = movementInterval;
                     _minions.Add(minion);
                 }
             }
@@ -429,6 +397,42 @@ namespace King_of_the_Maze
             //_mazeBuffer = new RenderTarget2D(GraphicsDevice, _maze.mazeSize * _maze.cellSize, _maze.mazeSize * _maze.cellSize);
             _playersSpawned = true;
             LoadContent();
+        }
+
+        protected Player GameOver()
+        {
+            if (_players.Count == 1 && _numberOfPlayers > 1)
+            {
+                MediaPlayer.Stop();
+                _currentState = GameState.GameOver;
+                return _players[0];
+            }
+            else if (_players.Count == 0)
+            {
+                MediaPlayer.Stop();
+                _currentState = GameState.GameOver;
+            }
+            else
+            {
+                foreach (Player player in _players)
+                {
+                    int basesCaptured = 0;
+                    foreach (Base Base in _bases)
+                    {
+                        if (Base._owner == player)
+                        {
+                            basesCaptured++;
+                        }
+                    }
+                    if (basesCaptured == _bases.Count)
+                    {
+                        MediaPlayer.Stop();
+                        _currentState = GameState.GameOver;
+                        return player;
+                    }
+                }
+            }
+            return null;
         }
 
         protected void HandleMusic()

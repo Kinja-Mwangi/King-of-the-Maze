@@ -127,42 +127,6 @@ namespace King_of_the_Maze
             }
         }
 
-        public Player GameOver(List<Player> players, List<Base> bases, ref GameState currentState)
-        {
-            if (players.Count == 1 && Game1._numberOfPlayers > 1)
-            {
-                MediaPlayer.Stop();
-                currentState = GameState.GameOver;
-                return players[0];
-            }
-            else if (players.Count == 0)
-            {
-                MediaPlayer.Stop();
-                currentState = GameState.GameOver;
-            }
-            else
-            {
-                foreach (Player player in players)
-                {
-                    int basesCaptured = 0;
-                    foreach (Base Base in bases)
-                    {
-                        if (Base._owner == player)
-                        {
-                            basesCaptured++;
-                        }
-                    }
-                    if (basesCaptured == bases.Count)
-                    {
-                        MediaPlayer.Stop();
-                        currentState = GameState.GameOver;
-                        return player;
-                    }
-                }
-            }
-            return null;
-        }
-
         public void PrintMaze(SpriteBatch sb, GraphicsDeviceManager gd)
         {
             for (int i = 0; i < mazeSize; i++)
