@@ -91,12 +91,6 @@ namespace King_of_the_Maze
 
             _currentState = GameState.MainMenu;
 
-            //_minion = new Minion(_maze, _cellSize, GraphicsDevice);
-            //for (int i = 0; i < numberOfMinions; i++)
-            //{
-            //    _minion = new Minion(_maze, _player, _cellSize, GraphicsDevice);
-            //    _minions.Add(_minion);
-            //}
             _playersSpawned = false;
             _gameInitialized = true;
 
